@@ -11,11 +11,23 @@
   DTS:LocaleID="21514"
   DTS:ObjectName="Package"
   DTS:PackageType="5"
-  DTS:VersionBuild="27"
-  DTS:VersionGUID="{CE571DE1-B5B0-4FCD-961E-3559AF42C996}">
+  DTS:VersionBuild="41"
+  DTS:VersionGUID="{744CC9EC-AAD5-475E-AFD8-59759DF65216}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[MSI.DWHNorthwindOrders]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{976A5F04-725A-4923-B1CB-405CADDB07B4}"
+      DTS:ObjectName="MSI.DWHNorthwindOrders">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectRetryCount="1"
+          DTS:ConnectRetryInterval="5"
+          DTS:ConnectionString="Data Source=MSI;Initial Catalog=DWHNorthwindOrders;Provider=SQLNCLI11.1;Integrated Security=SSPI;Application Name=SSIS-Package-{976A5F04-725A-4923-B1CB-405CADDB07B4}MSI.DWHNorthwindOrders;Auto Translate=False;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
     <DTS:ConnectionManager
       DTS:refId="Package.ConnectionManagers[MSI.Northwind]"
       DTS:CreationName="OLEDB"
@@ -1127,6 +1139,23 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA]]></arrayElement>
               startId="Package\Categories\Get Categorias.Outputs[OLE DB Source Output]" />
           </paths>
         </pipeline>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Clean Tables"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{43BED48A-67CE-48E3-9651-A1BAFD837934}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Clean Tables"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2022; © 2022 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{976A5F04-725A-4923-B1CB-405CADDB07B4}"
+          SQLTask:SqlStatementSource="    delete from dbo.DimCliente;&#xA;    delete from  dbo.DimEmpleado;&#xA;    delete from  dbo.DimFecha;&#xA;    delete from  dbo.DimProducto;&#xA;    delete from  dbo.DimRegion;&#xA;    delete from  dbo.DimTransportista;&#xA;    delete from dbo.FactVentas;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
       </DTS:ObjectData>
     </DTS:Executable>
     <DTS:Executable
@@ -3371,6 +3400,1411 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==]]></arrayElement>
       </DTS:ObjectData>
     </DTS:Executable>
     <DTS:Executable
+      DTS:refId="Package\FactVentas"
+      DTS:CreationName="Microsoft.Pipeline"
+      DTS:Description="Data Flow Task"
+      DTS:DTSID="{B6E7DE95-611B-4DFA-8588-49BCD28BFB87}"
+      DTS:ExecutableType="Microsoft.Pipeline"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="FactVentas"
+      DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <pipeline
+          version="1">
+          <components>
+            <component
+              refId="Package\FactVentas\Get Fact"
+              componentClassID="Microsoft.OLEDBSource"
+              contactInfo="OLE DB Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;7"
+              description="OLE DB Source"
+              name="Get Fact"
+              usesDispositions="true"
+              version="7">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[dbo].[FactVentas]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">SELECT 
+    DF.FechaID,
+    DP.ProductID,
+    DC.CategoryID,
+    DCL.CustomerID,
+    DE.EmployeeID,
+    DR.RegionID,
+    DT.ShipperID,
+    FV.CantidadVendida,
+    FV.TotalVenta,
+    FV.Descuento
+FROM DWHNorthwindOrders.dbo.FactVentas FV
+INNER JOIN DWHNorthwindOrders.dbo.DimFecha DF ON FV.FechaID = DF.FechaID
+INNER JOIN DWHNorthwindOrders.dbo.DimProducto DP ON FV.ProductID = DP.ProductID
+INNER JOIN DWHNorthwindOrders.dbo.DimCategoria DC ON FV.CategoryID = DC.CategoryID
+INNER JOIN DWHNorthwindOrders.dbo.DimCliente DCL ON FV.CustomerID = DCL.CustomerID
+INNER JOIN DWHNorthwindOrders.dbo.DimEmpleado DE ON FV.EmployeeID = DE.EmployeeID
+INNER JOIN DWHNorthwindOrders.dbo.DimRegion DR ON FV.RegionID = DR.RegionID
+INNER JOIN DWHNorthwindOrders.dbo.DimTransportista DT ON FV.ShipperID = DT.ShipperID;</property>
+                <property
+                  dataType="System.String"
+                  description="The variable that contains the SQL command to be executed."
+                  name="SqlCommandVariable"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">2</property>
+                <property
+                  dataType="System.String"
+                  description="The mappings between the parameters in the SQL command and variables."
+                  name="ParameterMapping"></property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\FactVentas\Get Fact.Connections[OleDbConnection]"
+                  connectionManagerID="Package.ConnectionManagers[MSI.DWHNorthwindOrders]"
+                  connectionManagerRefId="Package.ConnectionManagers[MSI.DWHNorthwindOrders]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <outputs>
+                <output
+                  refId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output]"
+                  name="OLE DB Source Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].Columns[FechaID]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].ExternalColumns[FechaID]"
+                      lineageId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].Columns[FechaID]"
+                      name="FechaID"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].Columns[ProductID]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].ExternalColumns[ProductID]"
+                      lineageId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].Columns[ProductID]"
+                      name="ProductID"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].Columns[CategoryID]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].ExternalColumns[CategoryID]"
+                      lineageId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].Columns[CategoryID]"
+                      name="CategoryID"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].Columns[CustomerID]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].ExternalColumns[CustomerID]"
+                      length="10"
+                      lineageId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].Columns[CustomerID]"
+                      name="CustomerID"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].Columns[EmployeeID]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].ExternalColumns[EmployeeID]"
+                      lineageId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].Columns[EmployeeID]"
+                      name="EmployeeID"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].Columns[RegionID]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].ExternalColumns[RegionID]"
+                      lineageId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].Columns[RegionID]"
+                      name="RegionID"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].Columns[ShipperID]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].ExternalColumns[ShipperID]"
+                      lineageId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].Columns[ShipperID]"
+                      name="ShipperID"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].Columns[CantidadVendida]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].ExternalColumns[CantidadVendida]"
+                      lineageId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].Columns[CantidadVendida]"
+                      name="CantidadVendida"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].Columns[TotalVenta]"
+                      dataType="numeric"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].ExternalColumns[TotalVenta]"
+                      lineageId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].Columns[TotalVenta]"
+                      name="TotalVenta"
+                      precision="18"
+                      scale="2"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].Columns[Descuento]"
+                      dataType="numeric"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].ExternalColumns[Descuento]"
+                      lineageId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].Columns[Descuento]"
+                      name="Descuento"
+                      precision="5"
+                      scale="2"
+                      truncationRowDisposition="FailComponent" />
+                  </outputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].ExternalColumns[FechaID]"
+                      dataType="i4"
+                      name="FechaID" />
+                    <externalMetadataColumn
+                      refId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].ExternalColumns[ProductID]"
+                      dataType="i4"
+                      name="ProductID" />
+                    <externalMetadataColumn
+                      refId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].ExternalColumns[CategoryID]"
+                      dataType="i4"
+                      name="CategoryID" />
+                    <externalMetadataColumn
+                      refId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].ExternalColumns[CustomerID]"
+                      codePage="1252"
+                      dataType="str"
+                      length="10"
+                      name="CustomerID" />
+                    <externalMetadataColumn
+                      refId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].ExternalColumns[EmployeeID]"
+                      dataType="i4"
+                      name="EmployeeID" />
+                    <externalMetadataColumn
+                      refId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].ExternalColumns[RegionID]"
+                      dataType="i4"
+                      name="RegionID" />
+                    <externalMetadataColumn
+                      refId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].ExternalColumns[ShipperID]"
+                      dataType="i4"
+                      name="ShipperID" />
+                    <externalMetadataColumn
+                      refId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].ExternalColumns[CantidadVendida]"
+                      dataType="i4"
+                      name="CantidadVendida" />
+                    <externalMetadataColumn
+                      refId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].ExternalColumns[TotalVenta]"
+                      dataType="numeric"
+                      name="TotalVenta"
+                      precision="18"
+                      scale="2" />
+                    <externalMetadataColumn
+                      refId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].ExternalColumns[Descuento]"
+                      dataType="numeric"
+                      name="Descuento"
+                      precision="5"
+                      scale="2" />
+                  </externalMetadataColumns>
+                </output>
+                <output
+                  refId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Error Output]"
+                  isErrorOut="true"
+                  name="OLE DB Source Error Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Error Output].Columns[FechaID]"
+                      dataType="i4"
+                      lineageId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Error Output].Columns[FechaID]"
+                      name="FechaID" />
+                    <outputColumn
+                      refId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Error Output].Columns[ProductID]"
+                      dataType="i4"
+                      lineageId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Error Output].Columns[ProductID]"
+                      name="ProductID" />
+                    <outputColumn
+                      refId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Error Output].Columns[CategoryID]"
+                      dataType="i4"
+                      lineageId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Error Output].Columns[CategoryID]"
+                      name="CategoryID" />
+                    <outputColumn
+                      refId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Error Output].Columns[CustomerID]"
+                      codePage="1252"
+                      dataType="str"
+                      length="10"
+                      lineageId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Error Output].Columns[CustomerID]"
+                      name="CustomerID" />
+                    <outputColumn
+                      refId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Error Output].Columns[EmployeeID]"
+                      dataType="i4"
+                      lineageId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Error Output].Columns[EmployeeID]"
+                      name="EmployeeID" />
+                    <outputColumn
+                      refId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Error Output].Columns[RegionID]"
+                      dataType="i4"
+                      lineageId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Error Output].Columns[RegionID]"
+                      name="RegionID" />
+                    <outputColumn
+                      refId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Error Output].Columns[ShipperID]"
+                      dataType="i4"
+                      lineageId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Error Output].Columns[ShipperID]"
+                      name="ShipperID" />
+                    <outputColumn
+                      refId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Error Output].Columns[CantidadVendida]"
+                      dataType="i4"
+                      lineageId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Error Output].Columns[CantidadVendida]"
+                      name="CantidadVendida" />
+                    <outputColumn
+                      refId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Error Output].Columns[TotalVenta]"
+                      dataType="numeric"
+                      lineageId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Error Output].Columns[TotalVenta]"
+                      name="TotalVenta"
+                      precision="18"
+                      scale="2" />
+                    <outputColumn
+                      refId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Error Output].Columns[Descuento]"
+                      dataType="numeric"
+                      lineageId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Error Output].Columns[Descuento]"
+                      name="Descuento"
+                      precision="5"
+                      scale="2" />
+                    <outputColumn
+                      refId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\FactVentas\Load Fact"
+              componentClassID="Microsoft.ManagedComponentHost"
+              contactInfo="Includes and runs custom script code. For example, apply a business rule that limits the range of valid values in an &quot;income&quot; column or add values in two columns and calculate the average of the sum.;Microsoft Corporation; Microsoft SQL Server; Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;13"
+              description="Includes and runs custom script code. For example, apply a business rule that limits the range of valid values in an &quot;income&quot; column or add values in two columns and calculate the average of the sum."
+              name="Load Fact"
+              version="13">
+              <properties>
+                <property
+                  dataType="System.String"
+                  description="Stores the source code of the component"
+                  isArray="true"
+                  name="SourceCode"
+                  state="cdata">
+                  <arrayElements
+                    arrayElementCount="30">
+                    <arrayElement
+                      dataType="System.String"><![CDATA[Properties\AssemblyInfo.cs]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[UTF8]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[using System.Reflection;
+using System.Runtime.CompilerServices;
+
+//
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+//
+[assembly: AssemblyTitle("SC_c54dfa24f5c44899b12e2a20c83a2ecc")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("SC_c54dfa24f5c44899b12e2a20c83a2ecc")]
+[assembly: AssemblyCopyright("Copyright @  2025")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+//
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+// You can specify all the values or you can default the Revision and Build Numbers 
+// by using the '*' as shown below:
+
+[assembly: AssemblyVersion("1.0.0.0")]
+]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[Properties\Resources.resx]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[UTF8]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+</root>]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[main.cs]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[UTF8]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Threading.Tasks;
+
+[Microsoft.SqlServer.Dts.Pipeline.SSISScriptComponentEntryPointAttribute]
+public class ScriptMain : UserComponent
+{
+    public override void Input0_ProcessInputRow(Input0Buffer Row)
+    {
+        try
+        {
+            InsertarFactVentas(
+                Row.FechaID,
+                Row.ProductID,
+                Row.CategoryID,
+                Row.CustomerID,
+                Row.EmployeeID,
+                Row.RegionID,
+                Row.ShipperID,
+                Row.CantidadVendida,
+                Row.TotalVenta,
+                Row.Descuento
+            ).GetAwaiter().GetResult();
+        }
+        catch (Exception ex)
+        {
+            ComponentMetaData.FireError(0, "Error al cargar FactVentas", ex.Message, "", 0, out bool cancel);
+        }
+    }
+
+    private async Task InsertarFactVentas(int fechaID, int productID, int categoryID, string customerID, int employeeID, int regionID, int shipperID, int cantidadVendida, decimal totalVenta, decimal descuento)
+    {
+        try
+        {
+            string connString = this.Variables.ConnectionString;
+
+            using (SqlConnection connection = new SqlConnection(connString))
+            using (SqlCommand command = new SqlCommand("InsertarFactVentas", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+
+                command.Parameters.AddWithValue("@FechaID", fechaID);
+                command.Parameters.AddWithValue("@ProductID", productID);
+                command.Parameters.AddWithValue("@CategoryID", categoryID);
+                command.Parameters.AddWithValue("@CustomerID", customerID);
+                command.Parameters.AddWithValue("@EmployeeID", employeeID);
+                command.Parameters.AddWithValue("@RegionID", regionID);
+                command.Parameters.AddWithValue("@ShipperID", shipperID);
+                command.Parameters.AddWithValue("@CantidadVendida", cantidadVendida);
+                command.Parameters.AddWithValue("@TotalVenta", totalVenta);
+                command.Parameters.AddWithValue("@Descuento", descuento);
+
+                await connection.OpenAsync();
+                await command.ExecuteNonQueryAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Error en InsertarFactVentas: " + ex.Message);
+        }
+    }
+}
+]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[BufferWrapper.cs]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[UTF8]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[/* THIS IS AUTO-GENERATED CODE THAT WILL BE OVERWRITTEN! DO NOT EDIT!
+*  Microsoft SQL Server Integration Services buffer wrappers
+*  This module defines classes for accessing data flow buffers
+*  THIS IS AUTO-GENERATED CODE THAT WILL BE OVERWRITTEN! DO NOT EDIT! */
+
+
+
+using System;
+using System.Data;
+using Microsoft.SqlServer.Dts.Pipeline;
+using Microsoft.SqlServer.Dts.Pipeline.Wrapper;
+
+public class Input0Buffer: ScriptBuffer
+
+{
+    public Input0Buffer(PipelineBuffer Buffer, int[] BufferColumnIndexes, OutputNameMap OutputMap)
+        : base(Buffer, BufferColumnIndexes, OutputMap)
+    {
+    }
+
+    public Int32 FechaID
+    {
+        get
+        {
+            return Buffer.GetInt32(BufferColumnIndexes[0]);
+        }
+    }
+    public bool FechaID_IsNull
+    {
+        get
+        {
+            return IsNull(0);
+        }
+    }
+
+    public Int32 ProductID
+    {
+        get
+        {
+            return Buffer.GetInt32(BufferColumnIndexes[1]);
+        }
+    }
+    public bool ProductID_IsNull
+    {
+        get
+        {
+            return IsNull(1);
+        }
+    }
+
+    public Int32 CategoryID
+    {
+        get
+        {
+            return Buffer.GetInt32(BufferColumnIndexes[2]);
+        }
+    }
+    public bool CategoryID_IsNull
+    {
+        get
+        {
+            return IsNull(2);
+        }
+    }
+
+    public String CustomerID
+    {
+        get
+        {
+            return Buffer.GetString(BufferColumnIndexes[3]);
+        }
+    }
+    public bool CustomerID_IsNull
+    {
+        get
+        {
+            return IsNull(3);
+        }
+    }
+
+    public Int32 EmployeeID
+    {
+        get
+        {
+            return Buffer.GetInt32(BufferColumnIndexes[4]);
+        }
+    }
+    public bool EmployeeID_IsNull
+    {
+        get
+        {
+            return IsNull(4);
+        }
+    }
+
+    public Int32 RegionID
+    {
+        get
+        {
+            return Buffer.GetInt32(BufferColumnIndexes[5]);
+        }
+    }
+    public bool RegionID_IsNull
+    {
+        get
+        {
+            return IsNull(5);
+        }
+    }
+
+    public Int32 ShipperID
+    {
+        get
+        {
+            return Buffer.GetInt32(BufferColumnIndexes[6]);
+        }
+    }
+    public bool ShipperID_IsNull
+    {
+        get
+        {
+            return IsNull(6);
+        }
+    }
+
+    public Int32 CantidadVendida
+    {
+        get
+        {
+            return Buffer.GetInt32(BufferColumnIndexes[7]);
+        }
+    }
+    public bool CantidadVendida_IsNull
+    {
+        get
+        {
+            return IsNull(7);
+        }
+    }
+
+    public Decimal TotalVenta
+    {
+        get
+        {
+            return Buffer.GetDecimal(BufferColumnIndexes[8]);
+        }
+    }
+    public bool TotalVenta_IsNull
+    {
+        get
+        {
+            return IsNull(8);
+        }
+    }
+
+    public Decimal Descuento
+    {
+        get
+        {
+            return Buffer.GetDecimal(BufferColumnIndexes[9]);
+        }
+    }
+    public bool Descuento_IsNull
+    {
+        get
+        {
+            return IsNull(9);
+        }
+    }
+
+    new public bool NextRow()
+    {
+        return base.NextRow();
+    }
+
+    new public bool EndOfRowset()
+    {
+        return base.EndOfRowset();
+    }
+
+}
+]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[ComponentWrapper.cs]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[UTF8]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[/* THIS IS AUTO-GENERATED CODE THAT WILL BE OVERWRITTEN! DO NOT EDIT!
+*  Microsoft SQL Server Integration Services component wrapper
+*  This module defines the base class for your component
+*  THIS IS AUTO-GENERATED CODE THAT WILL BE OVERWRITTEN! DO NOT EDIT! */
+
+using System;
+using System.Data;
+using Microsoft.SqlServer.Dts.Pipeline;
+using Microsoft.SqlServer.Dts.Pipeline.Wrapper;
+using Microsoft.SqlServer.Dts.Runtime.Wrapper;
+
+public class UserComponent: ScriptComponent
+{
+    public Connections Connections;
+    public Variables Variables;
+    public UserComponent()
+    {
+        Connections = new Connections(this);
+        Variables = new Variables(this);
+    }
+
+    public override void ProcessInput(int InputID, string InputName, PipelineBuffer Buffer, OutputNameMap OutputMap)
+    {
+
+        if (InputName.Equals(@"Input 0", StringComparison.Ordinal))
+        {
+            Input0_ProcessInput(new Input0Buffer(Buffer, GetColumnIndexes(InputID), OutputMap));
+        }
+
+    }
+
+    public virtual void Input0_ProcessInput(Input0Buffer Buffer)
+    {
+        while (Buffer.NextRow())
+        {
+            Input0_ProcessInputRow(Buffer);
+        }
+    }
+
+    public virtual void Input0_ProcessInputRow(Input0Buffer Row)
+    {
+    }
+
+}
+
+public class Connections
+{
+    ScriptComponent ParentComponent;
+
+    public Connections(ScriptComponent Component)
+    {
+        ParentComponent = Component;
+    }
+
+}
+
+public class Variables
+{
+    ScriptComponent ParentComponent;
+
+    public Variables(ScriptComponent Component)
+    {
+        ParentComponent = Component;
+    }
+
+    public String ConnectionString
+    {
+        get
+        {
+            return (String)(ParentComponent.ReadOnlyVariables["ConnectionString"].GetValueWithContext(ScriptComponent.EvaluatorContext));
+        }
+    }
+
+}
+]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[SC_c54dfa24f5c44899b12e2a20c83a2ecc.csproj]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[UTF8]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectTypeGuids>{30D016F9-3734-4E33-A861-5E7D899E18F3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{28bd1806-d842-464d-b33b-818959c1d2cd}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SC_c54dfa24f5c44899b12e2a20c83a2ecc</RootNamespace>
+    <AssemblyName>SC_c54dfa24f5c44899b12e2a20c83a2ecc</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ResolveAssemblyReferenceIgnoreTargetFrameworkAttributeVersionMismatch>true</ResolveAssemblyReferenceIgnoreTargetFrameworkAttributeVersionMismatch>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>.\bin\Debug\</OutputPath>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>false</DebugSymbols>
+    <Optimize>true</Optimize>
+    <OutputPath>.\bin\Release\</OutputPath>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.SqlServer.TxScript, Version=16.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91" />
+    <Reference Include="Microsoft.SqlServer.DTSRuntimeWrap, Version=16.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91" />
+    <Reference Include="Microsoft.SqlServer.DTSPipelineWrap, Version=16.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91" />
+    <Reference Include="Microsoft.SqlServer.PipelineHost, Version=16.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91" />
+    <Compile Include="main.cs" />
+    <Compile Include="BufferWrapper.cs" />
+    <Compile Include="ComponentWrapper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <AppDesigner Include="Properties\" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <!-- Include the build rules for a C# project.-->
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- This section defines VSTA properties that describe the host-changable project properties. -->
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{30D016F9-3734-4E33-A861-5E7D899E18F3}">
+        <ProjectProperties HostName="ScriptComponent" HostPackage="{B3A685AA-7EAF-4BC6-9940-57959FA5AC07}" ApplicationType="usd" Language="cs" TemplatesPath="" DebugInfoExeName="" DebugInfoCommandLine="" DebugInfoWorkingDir="" IconImageList="" />
+        <Host Name="ScriptComponent" GeneratedNamespace="SC_c54dfa24f5c44899b12e2a20c83a2ecc" IconIndex="0"></Host>
+        <ProjectClient>
+          <HostIdentifier>SSIS_SC160</HostIdentifier>
+        </ProjectClient>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[Project]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[UTF16LE]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[<?xml version="1.0" encoding="UTF-16" standalone="yes"?>
+<c:Project xmlns:c="http://schemas.microsoft.com/codeprojectml/2010/08/main" xmlns:msb="http://schemas.microsoft.com/developer/msbuild/2003" runtimeVersion="3.0" schemaVersion="1.0">
+  <msb:PropertyGroup>
+    <msb:Language>msBuild</msb:Language>
+    <msb:CodeName>SC_c54dfa24f5c44899b12e2a20c83a2ecc</msb:CodeName>
+    <msb:DisplayName>SC_c54dfa24f5c44899b12e2a20c83a2ecc</msb:DisplayName>
+    <msb:ProjectId>{253830C1-5163-4088-9038-216D5BFD0061}</msb:ProjectId>
+  </msb:PropertyGroup>
+  <msb:ItemGroup>
+    <msb:Project Include="SC_c54dfa24f5c44899b12e2a20c83a2ecc.csproj" />
+    <msb:File Include="main.cs" />
+    <msb:File Include="BufferWrapper.cs" />
+    <msb:File Include="Properties\Settings.Designer.cs" />
+    <msb:File Include="Properties\Settings.settings" />
+    <msb:File Include="Properties\AssemblyInfo.cs" />
+    <msb:File Include="Properties\Resources.resx" />
+    <msb:File Include="Properties\Resources.Designer.cs" />
+    <msb:File Include="ComponentWrapper.cs" />
+  </msb:ItemGroup>
+</c:Project>]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[Properties\Settings.Designer.cs]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[UTF8]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[//------------------------------------------------------------------------------
+// <auto-generated>
+//     This code was generated by a tool.
+//
+//     Changes to this file may cause incorrect behavior and will be lost if
+//     the code is regenerated.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="SC_c54dfa24f5c44899b12e2a20c83a2ecc.Properties.Settings.get_Default():SC_c54dfa24f5c44899b12e2a20c83a2ecc.Properties.Sett" +
+    "ings")]
+
+namespace SC_c54dfa24f5c44899b12e2a20c83a2ecc.Properties {
+    
+    
+    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+        
+        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+        private static Settings defaultInstance = new Settings();
+        
+        public static Settings Default {
+            get {
+                return defaultInstance;
+            }
+        }
+    }
+}
+]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[Properties\Settings.settings]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[UTF8]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
+<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
+  <Profiles>
+    <Profile Name="(Default)" />
+  </Profiles>
+  <Settings />
+</SettingsFile>]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[Properties\Resources.Designer.cs]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[UTF8]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[//------------------------------------------------------------------------------
+// <auto-generated>
+//     This code was generated by a tool.
+//
+//     Changes to this file may cause incorrect behavior and will be lost if
+//     the code is regenerated.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="SC_c54dfa24f5c44899b12e2a20c83a2ecc.Properties.Resources.get_ResourceManager():System.Resources.Resou" +
+    "rceManager")]
+[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="SC_c54dfa24f5c44899b12e2a20c83a2ecc.Properties.Resources.get_Culture():System.Globalization.CultureIn" +
+    "fo")]
+[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="SC_c54dfa24f5c44899b12e2a20c83a2ecc.Properties.Resources.set_Culture(System.Globalization.CultureInfo" +
+    "):Void")]
+
+namespace SC_c54dfa24f5c44899b12e2a20c83a2ecc.Properties {
+    
+    
+    /// <summary>
+    ///   A strongly-typed resource class, for looking up localized strings, etc.
+    /// </summary>
+    // This class was auto-generated by the StronglyTypedResourceBuilder
+    // class via a tool like ResGen or Visual Studio.
+    // To add or remove a member, edit your .ResX file then rerun ResGen
+    // with the /str option, or rebuild your VS project.
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+    internal class Resources {
+        
+        private static global::System.Resources.ResourceManager resourceMan;
+        
+        private static global::System.Globalization.CultureInfo resourceCulture;
+        
+        [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+        internal Resources() {
+        }
+        
+        /// <summary>
+        ///   Returns the cached ResourceManager instance used by this class.
+        /// </summary>
+        [global::System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        internal static global::System.Resources.ResourceManager ResourceManager {
+            get {
+                if ((resourceMan == null)) {
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SC_c54dfa24f5c44899b12e2a20c83a2ecc.Properties.Resources", typeof(Resources).Assembly);
+                    resourceMan = temp;
+                }
+                return resourceMan;
+            }
+        }
+        
+        /// <summary>
+        ///   Overrides the current thread's CurrentUICulture property for all
+        ///   resource lookups using this strongly typed resource class.
+        /// </summary>
+        [global::System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        internal static global::System.Globalization.CultureInfo Culture {
+            get {
+                return resourceCulture;
+            }
+            set {
+                resourceCulture = value;
+            }
+        }
+    }
+}
+]]></arrayElement>
+                  </arrayElements>
+                </property>
+                <property
+                  dataType="System.String"
+                  description="Stores the binary representation of the component"
+                  isArray="true"
+                  name="BinaryCode"
+                  state="cdata">
+                  <arrayElements
+                    arrayElementCount="2">
+                    <arrayElement
+                      dataType="System.String"><![CDATA[SC_c54dfa24f5c44899b12e2a20c83a2ecc.dll]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[TVqQAAMAAAAEAAAA//8AALgAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAgAAAAA4fug4AtAnNIbgBTM0hVGhpcyBwcm9ncmFtIGNhbm5vdCBiZSBydW4gaW4gRE9TIG1v
+ZGUuDQ0KJAAAAAAAAABQRQAATAEDAC107WcAAAAAAAAAAOAAIiALATAAACQAAAAIAAAAAAAAWkMA
+AAAgAAAAYAAAAAAAEAAgAAAAAgAABAAAAAAAAAAGAAAAAAAAAACgAAAAAgAAAAAAAAMAYIUAABAA
+ABAAAAAAEAAAEAAAAAAAABAAAAAAAAAAAAAAAAhDAABPAAAAAGAAAEgEAAAAAAAAAAAAAAAAAAAA
+AAAAAIAAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAIAAACAAAAAAAAAAAAAAACCAAAEgAAAAAAAAAAAAAAC50ZXh0AAAAYCMAAAAgAAAAJAAAAAIA
+AAAAAAAAAAAAAAAAACAAAGAucnNyYwAAAEgEAAAAYAAAAAYAAAAmAAAAAAAAAAAAAAAAAABAAABA
+LnJlbG9jAAAMAAAAAIAAAAACAAAALAAAAAAAAAAAAAAAAAAAQAAAQgAAAAAAAAAAAAAAAAAAAAA8
+QwAAAAAAAEgAAAACAAUARCcAAAwbAAABAAAAAAAAAFBCAAC4AAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAABswCwB0AAAAAQAAEQIDbwUAAAYDbwcAAAYDbwkAAAYDbwsA
+AAYDbw0AAAYDbw8AAAYDbxEAAAYDbxMAAAYDbxUAAAYDbxcAAAYoAgAABm8UAAAKChIAKBUAAAre
+IgsCKBYAAAoWcgEAAHAHbxcAAApyNwAAcBYSAm8YAAAK3gAqARAAAAAAAABRUQAiDwAAARMwAgCO
+AAAAAgAAERIAKBkAAAp9CQAABBIAAn0KAAAEEgADfQsAAAQSAAR9DAAABBIABX0NAAAEEgAOBH0O
+AAAEEgAOBX0PAAAEEgAOBn0QAAAEEgAOB30RAAAEEgAOCH0SAAAEEgAOCX0TAAAEEgAOCn0UAAAE
+EgAVfQgAAAQSAHwJAAAEEgAoAQAAKxIAfAkAAAQoGwAACioeAigbAAAGKioCAwQFKBwAAAoqUgJ7
+HQAACgJ7HgAAChaUbx8AAAoqIgIWKCAAAAoqUgJ7HQAACgJ7HgAACheUbx8AAAoqIgIXKCAAAAoq
+UgJ7HQAACgJ7HgAAChiUbx8AAAoqIgIYKCAAAAoqUgJ7HQAACgJ7HgAAChmUbyEAAAoqIgIZKCAA
+AAoqUgJ7HQAACgJ7HgAAChqUbx8AAAoqIgIaKCAAAAoqUgJ7HQAACgJ7HgAAChuUbx8AAAoqIgIb
+KCAAAAoqUgJ7HQAACgJ7HgAAChyUbx8AAAoqIgIcKCAAAAoqUgJ7HQAACgJ7HgAACh2Ubx8AAAoq
+IgIdKCAAAAoqUgJ7HQAACgJ7HgAACh6UbyIAAAoqIgIeKCAAAAoqVgJ7HQAACgJ7HgAACh8JlG8i
+AAAKKiYCHwkoIAAACioeAigjAAAKKh4CKCQAAAoqfgIoJQAACgICcx8AAAZ9AQAABAICcyAAAAZ9
+AgAABCqSBHI5AABwGm8mAAAKLBUCBQIDKCcAAAoOBHMEAAAGbx0AAAYqSisHAgNvHgAABgNvGQAA
+Bi3xKgYqOgIoKAAACgIDfQMAAAQqOgIoKAAACgIDfQQAAAQqlgJ7BAAABG8pAAAKckkAAHBvKgAA
+CigrAAAKbywAAAp0KAAAASoeAigoAAAKKq5+BQAABC0ecmsAAHDQBwAAAigtAAAKby4AAApzLwAA
+CoAFAAAEfgUAAAQqGn4GAAAEKh4CgAYAAAQqGn4HAAAEKh4CKDAAAAoqLnMnAAAGgAcAAAQqABsw
+AwD5AgAAAwAAEQJ7CAAABAoCewoAAAQLBhcmJgAGFzYYB3sCAAAEbyEAAAYMAghzMQAACn0VAAAE
+AAYXNhYCct0AAHACexUAAARzMgAACn0WAAAEAAY5lQEAAAYXO/ABAAACexYAAAQabzMAAAoCexYA
+AARvNAAACnIDAQBwAnsLAAAEjDMAAAFvNQAACiYCexYAAARvNAAACnIVAQBwAnsMAAAEjDMAAAFv
+NQAACiYCexYAAARvNAAACnIrAQBwAnsNAAAEjDMAAAFvNQAACiYCexYAAARvNAAACnJDAQBwAnsO
+AAAEbzUAAAomAnsWAAAEbzQAAApyWwEAcAJ7DwAABIwzAAABbzUAAAomAnsWAAAEbzQAAApycwEA
+cAJ7EAAABIwzAAABbzUAAAomAnsWAAAEbzQAAApyhwEAcAJ7EQAABIwzAAABbzUAAAomAnsWAAAE
+bzQAAApynQEAcAJ7EgAABIwzAAABbzUAAAomAnsWAAAEbzQAAApyvwEAcAJ7EwAABIwTAAABbzUA
+AAomAnsWAAAEbzQAAApy1wEAcAJ7FAAABIwTAAABbzUAAAomAnsVAAAEbzYAAApvFAAACg0SAyg3
+AAAKLT8CFiUKfQgAAAQCCX0XAAAEAnwJAAAEEgMCKAIAACvdEgEAAAJ7FwAABA0CfBcAAAT+FQ4A
+AAECFSUKfQgAAAQSAygVAAAKAnsWAAAEbzkAAApvOgAAChMEEgQoOwAACi1BAhclCn0IAAAEAhEE
+fRgAAAQCfAkAAAQSBAIoAwAAK92wAAAAAnsYAAAEEwQCfBgAAAT+FQIAABsCFSUKfQgAAAQSBCg8
+AAAKJt4YBhYvEwJ7FgAABCwLAnsWAAAEbz0AAArcAhR9FgAABN4YBhYvEwJ7FQAABCwLAnsVAAAE
+bz0AAArcAhR9FQAABN4ZEwVy7QEAcBEFbxcAAAooPgAACnM/AAAKet4ZEwYCH/59CAAABAJ8CQAA
+BBEGKEAAAAreEwIf/n0IAAAEAnwJAAAEKEEAAAoqAAAAQWQAAAIAAABLAAAAJAIAAG8CAAAYAAAA
+AAAAAAIAAAAwAAAAYAIAAJACAAAYAAAAAAAAAAAAAAATAAAAngIAALECAAAZAAAADwAAAQAAAAAO
+AAAAvgIAAMwCAAAZAAAADwAAATYCfAkAAAQDKEIAAAoqAABCU0pCAQABAAAAAAAMAAAAdjQuMC4z
+MDMxOQAAAAAFAGwAAAC0CQAAI34AACAKAAC0CwAAI1N0cmluZ3MAAAAA1BUAACwCAAAjVVMAABgA
+ABAAAAAjR1VJRAAAABAYAAD8AgAAI0Jsb2IAAAAAAAAAAgAAAVcXogsJCwAAAPoBMwAWAAABAAAA
+NwAAAAkAAAAYAAAAKgAAABgAAAABAAAAQgAAABMAAAADAAAABAAAABgAAAAZAAAAAgAAAAIAAAAB
+AAAABwAAAAEAAAABAAAAAwAAAAAAzwUBAAAAAAAGAKcELAkGADsFLAkGAMADGQkPAKAJAAAGAO0D
+IQcGAIoEIQcGAGsEIQcGACIFIQcGAMcEIQcGAOAEIQcGAB8EIQcGADoEbAUKAPsE3gIGANgILAkG
+AGgH2QYGABQD2QYGAAQELAkGAKkFLAoGALEF2QYGAIgDLAkGAA8D2QYGAK4CLAkGAHoALAkGABkI
+LAkOAFcHnwoOAE0CnwoGAFMEGQkKAFkI3gISAEoI3gIKALoH3gIKANMK3gIGAGwK2QYGAKMDGQkG
+AGoITAkGAJYHDAcWAGgDuQUWANQDuQUWAEED9wYaAAEAoggGAJ4F2QYGAIUH2QYeACoAeggeABoA
+egh/AFgLAAAeADsAeggGAIAC2QYGAKsLIQcOAEMCcgcOAAMDlAEOADMHnwoGAIsA2QYOAMsInwoO
+AEoHcgcGAHMALAoGAHQC2QYAAAAAtwAAAAAAAQABAAEAEADsBgAAEAABAAEAAQAQAD0IAABxAAEA
+BAABABAAtQoAAH0AAQAbAAEAEABKCgAAgQADAB8AAQAQAOoJAACBAAQAIAAAABAAUwmvCYEABQAi
+AAABEAAZCq8JmQAHACYAAwEQAFMAAABVAAgAKQAGAEoKWwEGAOoJXwEBAMMKYwEBAMMKYwERAOAG
+ZwERADEDbAERAFgCcQEGAH0DdQEGADAIeAEGACIKfAEGAMwAdQEGAEQBdQEGAGUBdQEGABMBgAEG
+AOMAdQEGAPsAdQEGACwBdQEGAIQBdQEGAMUBgwEGALAHgwEBAJEAhwEBAKkAiwEBAGwAjwEBAKIA
+kwFQIAAAAADGAIgLmgEBAOAgAAAAAIEABgmgAQIAeiEAAAAAhhj5CAYADACCIQAAAACGGPkIZgAM
+AI0hAAAAAIYIwACxAQ8AoiEAAAAAhgj3BY0ADwCrIQAAAACGCDYBsQEPAMAhAAAAAIYIXwaNAA8A
+ySEAAAAAhghWAbEBDwDeIQAAAACGCHQGjQAPAOchAAAAAIYIBAE7AA8A/CEAAAAAhgg0Bo0ADwAF
+IgAAAACGCNQAsQEPABoiAAAAAIYICgaNAA8AIyIAAAAAhgjuALEBDwA4IgAAAACGCCAGjQAPAEEi
+AAAAAIYIHgGxAQ8AViIAAAAAhghKBo0ADwBfIgAAAACGCHABsQEPAHQiAAAAAIYIigaNAA8AfSIA
+AAAAhgi2AbUBDwCSIgAAAACGCKUGjQAPAJsiAAAAAIYIoge1AQ8AsSIAAAAAhgi7Bo0ADwC7IgAA
+AACGAJ8LjQAPAMMiAAAAAIYAcwqNAA8AyyIAAAAAhhj5CAYADwDrIgAAAADGAC4LugEPABAjAAAA
+AMYBJwuaARMAIyMAAAAAxgGIC5oBFAAlIwAAAACGGPkIxAEVADQjAAAAAIYY+QjEARYAQyMAAAAA
+hgiGBTsAFwBpIwAAAACDGPkIBgAXAHEjAAAAAJMIZgjKARcAnSMAAAAAkwgZA9ABFwCkIwAAAACT
+CCUD1gEXAKwjAAAAAJYIfwrdARgAsyMAAAAAhhj5CAYAGAC7IwAAAACRGP8I4gEYAMgjAAAAAOEB
+OwsGABgANCcAAAAA4QHBAhsAGAAAAAEAowsAAAEAzAAAAAIARAEAAAMAZQEAAAQAEwEAAAUA4wAA
+AAYA+wAAAAcALAEAAAgAhAEAAAkAxQEAAAoAsAcAAAEAXwgAAAIA9AkAAAMAyAcAAAEATgEAAAIA
+pAIAAAMAXwgAAAQAyAcAAAEAXwgAAAEAowsAAAEA2QoAAAEA2QoAAAEAZgUAAAEA0QIJAFkACQD5
+CAEAEQD5CAYAGQD5CAoAKQD5CBAAMQD5CBAAOQD5CBAAQQD5CBAASQD5CBAAUQD5CBAAWQD5CBAA
+YQD5CBAAaQD5CAYAiQD5CBUAoQD5CAYAsQA7CwYAsQDBAhsA2QD5CAYACQH5CAYAKQH5CCEAkQDk
+CDAAcQCLCgYA+QCgATUAeQBoAjsAOQHvCD8AwQBhA08AwQAAC1QAwQClBWEA4QD5CGYA4QBfCHAA
+4QD0CXQA6QCIAHgA4QDJBn0A6QCbBYIA6QCuBYcA4QCfC40A4QBzCo0A+QD5CAYAQQFDCpEA+QAI
+CpkAAQH5CAYA+QDeCZ8AUQHQBqUA+QBzC6wAWQFEC7IAgQCSArkAgQCnC8EAEQH5CMcAMQH5CAYA
+yQD5CBAA0QD5COEAgQH/AugA0QBWCu8AkQFZBfUAqQH9AWEAcQAzAo0AwQAcAv0AgQEHAg8BDADk
+CB8BFAAzAo0AFACLCjgBuQFZAwYAQQFlCj0BeQD5CBAAwQBlB0MBwQCVCgYAwQDBAhsALgALAAgC
+LgATABECLgAbADACLgAjADkCLgArAGICLgAzAGICLgA7AGICLgBDADkCLgBLAGgCLgBTAGICLgBb
+AH8CQABrAM0CQwBjAPYC4QBzAPYC4wCTAPYCIwFzAPYCyQKbADAC6QKbADACQAWLAPYCKABKAM8A
+AwABAAYAFQAHABYACAAYAAAAxADmAQAA+wXqAQAAOgHmAQAAYwbqAQAAWgHmAQAAeAbqAQAACAHu
+AQAAOAbqAQAA2ADmAQAADgbqAQAA8gDmAQAAJAbqAQAAIgHmAQAATgbqAQAAdAHmAQAAjgbqAQAA
+ugHyAQAAqQbqAQAApgfyAQAAvwbqAQAAigXuAQAAagj3AQAAOQP9AQAAgwoDAgIABQADAAIABgAF
+AAIABwAHAAIACAAJAAIACQALAAIACgANAAIACwAPAAIADAARAAIADQATAAIADgAVAAIADwAXAAIA
+EAAZAAIAEQAbAAIAEgAdAAIAEwAfAAIAFAAhAAIAFQAjAAIAFgAlAAIAFwAnAAIAGAApAAIAIQAr
+AAIAIwAtAAIAJAAvAAEAJQAvAAIAJgAxAAkAUgAfAAkAVAAhABgBKAEEgAAAAQAAAAAAAAAAAAAA
+AADZAQAABAAAAAAAAAAAAAAASQHQAQAAAAAQAAAAAAAAAAAAAABSAeMKAAAAAAQAAAAAAAAAAAAA
+AEkBlAEAAAAAEAAAAAAAAAAAAAAAUgEGCwAAAAAEAAAAAAAAAAAAAABJAdkGAAAAABAAAAAAAAAA
+AAAAAFIB9QcAAAAAEAAAAAAAAAAAAAAAUgHSBwAAAAAAAAAAAQAAAF0JAAAJAAIANQBcAHEACAFx
+AC4BAAAASURUU0NvbXBvbmVudE1ldGFEYXRhMTAwAElEVFNWYXJpYWJsZTEwMABJRFRTVmFyaWFi
+bGVzMTAwAElEVFNFdmFsdWF0b3JDb250ZXh0MTAwADxJbnNlcnRhckZhY3RWZW50YXM+ZF9fMQA8
+PnVfXzEAVGFza2AxAFRhc2tBd2FpdGVyYDEAR2V0SW50MzIAPGNvbm5lY3Rpb24+NV9fMgA8PnVf
+XzIAPGNvbW1hbmQ+NV9fMwA8TW9kdWxlPgBnZXRfRmVjaGFJRABmZWNoYUlEAGdldF9FbXBsb3ll
+ZUlEAGVtcGxveWVlSUQAZ2V0X1JlZ2lvbklEAHJlZ2lvbklEAGdldF9DdXN0b21lcklEAGN1c3Rv
+bWVySUQAZ2V0X1NoaXBwZXJJRABzaGlwcGVySUQAZ2V0X1Byb2R1Y3RJRABwcm9kdWN0SUQASW5w
+dXRJRABnZXRfQ2F0ZWdvcnlJRABjYXRlZ29yeUlEAGdldF9DYW50aWRhZFZlbmRpZGEAY2FudGlk
+YWRWZW5kaWRhAFN5c3RlbS5EYXRhAGdldF9Db21wb25lbnRNZXRhRGF0YQBnZXRfVG90YWxWZW50
+YQB0b3RhbFZlbnRhAG1zY29ybGliAFNDX2M1NGRmYTI0ZjVjNDQ4OTliMTJlMmEyMGM4M2EyZWNj
+AE9wZW5Bc3luYwBFeGVjdXRlTm9uUXVlcnlBc3luYwBBd2FpdFVuc2FmZU9uQ29tcGxldGVkAGdl
+dF9Jc0NvbXBsZXRlZABEYkNvbW1hbmQAU3FsQ29tbWFuZABkZWZhdWx0SW5zdGFuY2UAZ2V0X01l
+c3NhZ2UASURpc3Bvc2FibGUAUnVudGltZVR5cGVIYW5kbGUAR2V0VHlwZUZyb21IYW5kbGUASW5w
+dXROYW1lAElBc3luY1N0YXRlTWFjaGluZQBTZXRTdGF0ZU1hY2hpbmUAc3RhdGVNYWNoaW5lAE1p
+Y3Jvc29mdC5TcWxTZXJ2ZXIuRHRzLlBpcGVsaW5lAHNldF9Db21tYW5kVHlwZQBWYWx1ZVR5cGUA
+Z2V0X0N1bHR1cmUAc2V0X0N1bHR1cmUAcmVzb3VyY2VDdWx0dXJlAEFwcGxpY2F0aW9uU2V0dGlu
+Z3NCYXNlAERpc3Bvc2UAQ3JlYXRlAEVkaXRvckJyb3dzYWJsZVN0YXRlADw+MV9fc3RhdGUAQ29t
+cGlsZXJHZW5lcmF0ZWRBdHRyaWJ1dGUARGVidWdnZXJOb25Vc2VyQ29kZUF0dHJpYnV0ZQBEZWJ1
+Z2dhYmxlQXR0cmlidXRlAEVkaXRvckJyb3dzYWJsZUF0dHJpYnV0ZQBBc3NlbWJseVRpdGxlQXR0
+cmlidXRlAEFzeW5jU3RhdGVNYWNoaW5lQXR0cmlidXRlAEFzc2VtYmx5VHJhZGVtYXJrQXR0cmli
+dXRlAFRhcmdldEZyYW1ld29ya0F0dHJpYnV0ZQBEZWJ1Z2dlckhpZGRlbkF0dHJpYnV0ZQBBc3Nl
+bWJseUNvbmZpZ3VyYXRpb25BdHRyaWJ1dGUAQXNzZW1ibHlEZXNjcmlwdGlvbkF0dHJpYnV0ZQBD
+b21waWxhdGlvblJlbGF4YXRpb25zQXR0cmlidXRlAEFzc2VtYmx5UHJvZHVjdEF0dHJpYnV0ZQBB
+c3NlbWJseUNvcHlyaWdodEF0dHJpYnV0ZQBTU0lTU2NyaXB0Q29tcG9uZW50RW50cnlQb2ludEF0
+dHJpYnV0ZQBBc3NlbWJseUNvbXBhbnlBdHRyaWJ1dGUAUnVudGltZUNvbXBhdGliaWxpdHlBdHRy
+aWJ1dGUAQWRkV2l0aFZhbHVlAHZhbHVlAFN5c3RlbS5SdW50aW1lLlZlcnNpb25pbmcAZ2V0X0Nv
+bm5lY3Rpb25TdHJpbmcAR2V0U3RyaW5nAGdldF9UYXNrAEdldERlY2ltYWwAU3lzdGVtLkNvbXBv
+bmVudE1vZGVsAFNDX2M1NGRmYTI0ZjVjNDQ4OTliMTJlMmEyMGM4M2EyZWNjLmRsbABnZXRfRmVj
+aGFJRF9Jc051bGwAZ2V0X0VtcGxveWVlSURfSXNOdWxsAGdldF9SZWdpb25JRF9Jc051bGwAZ2V0
+X0N1c3RvbWVySURfSXNOdWxsAGdldF9TaGlwcGVySURfSXNOdWxsAGdldF9Qcm9kdWN0SURfSXNO
+dWxsAGdldF9DYXRlZ29yeUlEX0lzTnVsbABnZXRfQ2FudGlkYWRWZW5kaWRhX0lzTnVsbABnZXRf
+VG90YWxWZW50YV9Jc051bGwAZ2V0X0Rlc2N1ZW50b19Jc051bGwAZ2V0X0l0ZW0AU3lzdGVtAHJl
+c291cmNlTWFuAFNjcmlwdE1haW4AU3lzdGVtLkNvbmZpZ3VyYXRpb24AU3lzdGVtLkdsb2JhbGl6
+YXRpb24AU3lzdGVtLlJlZmxlY3Rpb24AU3FsUGFyYW1ldGVyQ29sbGVjdGlvbgBEYkNvbm5lY3Rp
+b24AU3FsQ29ubmVjdGlvbgBTZXRFeGNlcHRpb24AU3lzdGVtLkRhdGEuQ29tbW9uAFN0cmluZ0Nv
+bXBhcmlzb24AQ3VsdHVyZUluZm8AZ2V0X0Rlc2N1ZW50bwBkZXNjdWVudG8AT3V0cHV0TmFtZU1h
+cABPdXRwdXRNYXAATWljcm9zb2Z0LlNxbFNlcnZlci5EVFNSdW50aW1lV3JhcABNaWNyb3NvZnQu
+U3FsU2VydmVyLkRUU1BpcGVsaW5lV3JhcABBc3luY1Rhc2tNZXRob2RCdWlsZGVyADw+dF9fYnVp
+bGRlcgBJbnB1dDBCdWZmZXIAUGlwZWxpbmVCdWZmZXIAU2NyaXB0QnVmZmVyAGdldF9SZXNvdXJj
+ZU1hbmFnZXIATWljcm9zb2Z0LlNxbFNlcnZlci5EdHMuUnVudGltZS5XcmFwcGVyAE1pY3Jvc29m
+dC5TcWxTZXJ2ZXIuRHRzLlBpcGVsaW5lLldyYXBwZXIAU3FsUGFyYW1ldGVyAFRhc2tBd2FpdGVy
+AEdldEF3YWl0ZXIARmlyZUVycm9yAC5jdG9yAC5jY3RvcgBJbnNlcnRhckZhY3RWZW50YXMAU3lz
+dGVtLkRpYWdub3N0aWNzAFN5c3RlbS5SdW50aW1lLkNvbXBpbGVyU2VydmljZXMAU3lzdGVtLlJl
+c291cmNlcwBTQ19jNTRkZmEyNGY1YzQ0ODk5YjEyZTJhMjBjODNhMmVjYy5Qcm9wZXJ0aWVzLlJl
+c291cmNlcy5yZXNvdXJjZXMARGVidWdnaW5nTW9kZXMAU0NfYzU0ZGZhMjRmNWM0NDg5OWIxMmUy
+YTIwYzgzYTJlY2MuUHJvcGVydGllcwBnZXRfUmVhZE9ubHlWYXJpYWJsZXMAQnVmZmVyQ29sdW1u
+SW5kZXhlcwBHZXRDb2x1bW5JbmRleGVzAFNldHRpbmdzADw+NF9fdGhpcwBTeXN0ZW0uVGhyZWFk
+aW5nLlRhc2tzAEVxdWFscwBDb25uZWN0aW9ucwBnZXRfUGFyYW1ldGVycwBDb25jYXQAT2JqZWN0
+AEVuZE9mUm93c2V0AGdldF9EZWZhdWx0AEdldFJlc3VsdABTZXRSZXN1bHQAU3lzdGVtLkRhdGEu
+U3FsQ2xpZW50AFVzZXJDb21wb25lbnQAUGFyZW50Q29tcG9uZW50AFNjcmlwdENvbXBvbmVudABN
+aWNyb3NvZnQuU3FsU2VydmVyLlR4U2NyaXB0AFN0YXJ0AE1pY3Jvc29mdC5TcWxTZXJ2ZXIuUGlw
+ZWxpbmVIb3N0AElucHV0MF9Qcm9jZXNzSW5wdXQATW92ZU5leHQAR2V0VmFsdWVXaXRoQ29udGV4
+dABTY3JpcHRDb21wb25lbnRFdmFsQ29udGV4dABnZXRfRXZhbHVhdG9yQ29udGV4dABJbnB1dDBf
+UHJvY2Vzc0lucHV0Um93AE5leHRSb3cAZ2V0X0Fzc2VtYmx5AAA1RQByAHIAbwByACAAYQBsACAA
+YwBhAHIAZwBhAHIAIABGAGEAYwB0AFYAZQBuAHQAYQBzAAABAA9JAG4AcAB1AHQAIAAwAAAhQwBv
+AG4AbgBlAGMAdABpAG8AbgBTAHQAcgBpAG4AZwAAcVMAQwBfAGMANQA0AGQAZgBhADIANABmADUA
+YwA0ADQAOAA5ADkAYgAxADIAZQAyAGEAMgAwAGMAOAAzAGEAMgBlAGMAYwAuAFAAcgBvAHAAZQBy
+AHQAaQBlAHMALgBSAGUAcwBvAHUAcgBjAGUAcwAAJUkAbgBzAGUAcgB0AGEAcgBGAGEAYwB0AFYA
+ZQBuAHQAYQBzAAARQABGAGUAYwBoAGEASQBEAAAVQABQAHIAbwBkAHUAYwB0AEkARAAAF0AAQwBh
+AHQAZQBnAG8AcgB5AEkARAAAF0AAQwB1AHMAdABvAG0AZQByAEkARAAAF0AARQBtAHAAbABvAHkA
+ZQBlAEkARAAAE0AAUgBlAGcAaQBvAG4ASQBEAAAVQABTAGgAaQBwAHAAZQByAEkARAAAIUAAQwBh
+AG4AdABpAGQAYQBkAFYAZQBuAGQAaQBkAGEAABdAAFQAbwB0AGEAbABWAGUAbgB0AGEAABVAAEQA
+ZQBzAGMAdQBlAG4AdABvAAA7RQByAHIAbwByACAAZQBuACAASQBuAHMAZQByAHQAYQByAEYAYQBj
+AHQAVgBlAG4AdABhAHMAOgAgAAAAAACyf+kb0UseSoPk2EMYMwZoAAQgAQEIAyAAAQUgAQEREQQg
+AQEOBSABARJBBSABARJZBiABARGAkQcHAxE5Ej0CBCAAETkFIAASgJ0DIAAOCiAGAQgODg4IEAIE
+BwERJAQAABFhBzABAQEQHgAECgERJAQgABJJCSADARJ1HQgSeQMGEnUDBh0IBCABCAgEIAECCAQg
+AQ4IBSABEU0IAyAAAgcgAgIOEYClBSABHQgIBSAAEoCpBiABEoCtHAUAABKAsQYgARwSgLUHAAES
+QRGAuQUgABKAvQcgAgEOEoC9EQcHCBIIDhE5FRFdAQgSPRI9BiACAQ4SZQYgAQERgMUFIAASgMkH
+IAISgNEOHAowAgIBEB4AEB4BBgoCETkRJAggABUSgNkBCAYVEoDZAQgIIAAVEV0BEwAFFRFdAQgJ
+CgIVEV0BCBEkBCAAEwAFAAIODg4FIAEBEj0It3pcVhk04IkIiYRdzYCAzJEDBhIUAwYSGAMGEn0E
+BhKAiQQGEoCNAwYSIAIGCAMGEWEDBhIIAgYOAwYRTQMGEmUDBhJpAwYROQYGFRFdAQgFIAEBEgwQ
+IAoSSQgICA4ICAgIEU0RTQMgAAgEIAARTQkgBAEIDhJ1EnkFIAEBEn0FAAASgIkFAAASgI0GAAEB
+EoCNBAAAEiADAAABAygACAMoAAIDKAAOBCgAEU0FCAASgIkFCAASgI0ECAASIAgBAAgAAAAAAB4B
+AAEAVAIWV3JhcE5vbkV4Y2VwdGlvblRocm93cwEIAQACAAAAAAAoAQAjU0NfYzU0ZGZhMjRmNWM0
+NDg5OWIxMmUyYTIwYzgzYTJlY2MAAAUBAAAAABYBABFDb3B5cmlnaHQgQCAgMjAyNQAATQEAHC5O
+RVRGcmFtZXdvcmssVmVyc2lvbj12NC43LjIBAFQOFEZyYW1ld29ya0Rpc3BsYXlOYW1lFC5ORVQg
+RnJhbWV3b3JrIDQuNy4yKAEAI1NjcmlwdE1haW4rPEluc2VydGFyRmFjdFZlbnRhcz5kX18xAAAE
+AQAAAAC0AAAAzsrvvgEAAACRAAAAbFN5c3RlbS5SZXNvdXJjZXMuUmVzb3VyY2VSZWFkZXIsIG1z
+Y29ybGliLCBWZXJzaW9uPTQuMC4wLjAsIEN1bHR1cmU9bmV1dHJhbCwgUHVibGljS2V5VG9rZW49
+Yjc3YTVjNTYxOTM0ZTA4OSNTeXN0ZW0uUmVzb3VyY2VzLlJ1bnRpbWVSZXNvdXJjZVNldAIAAAAA
+AAAAAAAAAFBBRFBBRFC0AAAAMEMAAAAAAAAAAAAASkMAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+ADxDAAAAAAAAAAAAAAAAX0NvckRsbE1haW4AbXNjb3JlZS5kbGwAAAAAAP8lACAAEAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAEAAA
+ABgAAIAAAAAAAAAAAAAAAAAAAAEAAQAAADAAAIAAAAAAAAAAAAAAAAAAAAEAAAAAAEgAAABYYAAA
+7AMAAAAAAAAAAAAA7AM0AAAAVgBTAF8AVgBFAFIAUwBJAE8ATgBfAEkATgBGAE8AAAAAAL0E7/4A
+AAEAAAABAAAAAAAAAAEAAAAAAD8AAAAAAAAABAAAAAIAAAAAAAAAAAAAAAAAAABEAAAAAQBWAGEA
+cgBGAGkAbABlAEkAbgBmAG8AAAAAACQABAAAAFQAcgBhAG4AcwBsAGEAdABpAG8AbgAAAAAAAACw
+BEwDAAABAFMAdAByAGkAbgBnAEYAaQBsAGUASQBuAGYAbwAAACgDAAABADAAMAAwADAAMAA0AGIA
+MAAAABoAAQABAEMAbwBtAG0AZQBuAHQAcwAAAAAAAAAiAAEAAQBDAG8AbQBwAGEAbgB5AE4AYQBt
+AGUAAAAAAAAAAABwACQAAQBGAGkAbABlAEQAZQBzAGMAcgBpAHAAdABpAG8AbgAAAAAAUwBDAF8A
+YwA1ADQAZABmAGEAMgA0AGYANQBjADQANAA4ADkAOQBiADEAMgBlADIAYQAyADAAYwA4ADMAYQAy
+AGUAYwBjAAAAMAAIAAEARgBpAGwAZQBWAGUAcgBzAGkAbwBuAAAAAAAxAC4AMAAuADAALgAwAAAA
+cAAoAAEASQBuAHQAZQByAG4AYQBsAE4AYQBtAGUAAABTAEMAXwBjADUANABkAGYAYQAyADQAZgA1
+AGMANAA0ADgAOQA5AGIAMQAyAGUAMgBhADIAMABjADgAMwBhADIAZQBjAGMALgBkAGwAbAAAAEgA
+EgABAEwAZQBnAGEAbABDAG8AcAB5AHIAaQBnAGgAdAAAAEMAbwBwAHkAcgBpAGcAaAB0ACAAQAAg
+ACAAMgAwADIANQAAACoAAQABAEwAZQBnAGEAbABUAHIAYQBkAGUAbQBhAHIAawBzAAAAAAAAAAAA
+eAAoAAEATwByAGkAZwBpAG4AYQBsAEYAaQBsAGUAbgBhAG0AZQAAAFMAQwBfAGMANQA0AGQAZgBh
+ADIANABmADUAYwA0ADQAOAA5ADkAYgAxADIAZQAyAGEAMgAwAGMAOAAzAGEAMgBlAGMAYwAuAGQA
+bABsAAAAaAAkAAEAUAByAG8AZAB1AGMAdABOAGEAbQBlAAAAAABTAEMAXwBjADUANABkAGYAYQAy
+ADQAZgA1AGMANAA0ADgAOQA5AGIAMQAyAGUAMgBhADIAMABjADgAMwBhADIAZQBjAGMAAAA0AAgA
+AQBQAHIAbwBkAHUAYwB0AFYAZQByAHMAaQBvAG4AAAAxAC4AMAAuADAALgAwAAAAOAAIAAEAQQBz
+AHMAZQBtAGIAbAB5ACAAVgBlAHIAcwBpAG8AbgAAADEALgAwAC4AMAAuADAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAADAAAAFwzAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==]]></arrayElement>
+                  </arrayElements>
+                </property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the Microsoft Visual Studio Tools for Applications project. Project names must be unique within a package."
+                  name="VSTAProjectName"
+                  typeConverter="NOTBROWSABLE">SC_c54dfa24f5c44899b12e2a20c83a2ecc</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the programming language used by the script."
+                  name="ScriptLanguage"
+                  typeConverter="Microsoft.SqlServer.VSTAHosting.ScriptingLanguages">CSharp</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies a comma-separated list of read-only variables."
+                  name="ReadOnlyVariables"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ScriptUIVariablePickerDlg">User::ConnectionString</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies a comma-separated list of read/write variables."
+                  name="ReadWriteVariables"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ScriptUIWriteableVariablePickerDlg"></property>
+                <property
+                  dataType="System.String"
+                  description="List of breakpoints present on the script."
+                  isArray="true"
+                  name="BreakpointCollection"
+                  typeConverter="NOTBROWSABLE">
+                  <arrayElements
+                    arrayElementCount="0" />
+                </property>
+                <property
+                  dataType="System.String"
+                  description="Checksum to match component metedata against compiled codes."
+                  name="MetadataChecksum140"
+                  typeConverter="NOTBROWSABLE">86</property>
+                <property
+                  dataType="System.String"
+                  name="UserComponentTypeName">Microsoft.ScriptComponentHost</property>
+              </properties>
+              <inputs>
+                <input
+                  refId="Package\FactVentas\Load Fact.Inputs[Input 0]"
+                  hasSideEffects="true"
+                  name="Input 0">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\FactVentas\Load Fact.Inputs[Input 0].Columns[FechaID]"
+                      cachedDataType="i4"
+                      cachedName="FechaID"
+                      lineageId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].Columns[FechaID]" />
+                    <inputColumn
+                      refId="Package\FactVentas\Load Fact.Inputs[Input 0].Columns[ProductID]"
+                      cachedDataType="i4"
+                      cachedName="ProductID"
+                      lineageId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].Columns[ProductID]" />
+                    <inputColumn
+                      refId="Package\FactVentas\Load Fact.Inputs[Input 0].Columns[CategoryID]"
+                      cachedDataType="i4"
+                      cachedName="CategoryID"
+                      lineageId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].Columns[CategoryID]" />
+                    <inputColumn
+                      refId="Package\FactVentas\Load Fact.Inputs[Input 0].Columns[CustomerID]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="10"
+                      cachedName="CustomerID"
+                      lineageId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].Columns[CustomerID]" />
+                    <inputColumn
+                      refId="Package\FactVentas\Load Fact.Inputs[Input 0].Columns[EmployeeID]"
+                      cachedDataType="i4"
+                      cachedName="EmployeeID"
+                      lineageId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].Columns[EmployeeID]" />
+                    <inputColumn
+                      refId="Package\FactVentas\Load Fact.Inputs[Input 0].Columns[RegionID]"
+                      cachedDataType="i4"
+                      cachedName="RegionID"
+                      lineageId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].Columns[RegionID]" />
+                    <inputColumn
+                      refId="Package\FactVentas\Load Fact.Inputs[Input 0].Columns[ShipperID]"
+                      cachedDataType="i4"
+                      cachedName="ShipperID"
+                      lineageId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].Columns[ShipperID]" />
+                    <inputColumn
+                      refId="Package\FactVentas\Load Fact.Inputs[Input 0].Columns[CantidadVendida]"
+                      cachedDataType="i4"
+                      cachedName="CantidadVendida"
+                      lineageId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].Columns[CantidadVendida]" />
+                    <inputColumn
+                      refId="Package\FactVentas\Load Fact.Inputs[Input 0].Columns[TotalVenta]"
+                      cachedDataType="numeric"
+                      cachedName="TotalVenta"
+                      cachedPrecision="18"
+                      cachedScale="2"
+                      lineageId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].Columns[TotalVenta]" />
+                    <inputColumn
+                      refId="Package\FactVentas\Load Fact.Inputs[Input 0].Columns[Descuento]"
+                      cachedDataType="numeric"
+                      cachedName="Descuento"
+                      cachedPrecision="5"
+                      cachedScale="2"
+                      lineageId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output].Columns[Descuento]" />
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\FactVentas\Load Fact.Outputs[Output 0]"
+                  name="Output 0"
+                  synchronousInputId="Package\FactVentas\Load Fact.Inputs[Input 0]">
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+          </components>
+          <paths>
+            <path
+              refId="Package\FactVentas.Paths[OLE DB Source Output]"
+              endId="Package\FactVentas\Load Fact.Inputs[Input 0]"
+              name="OLE DB Source Output"
+              startId="Package\FactVentas\Get Fact.Outputs[OLE DB Source Output]" />
+          </paths>
+        </pipeline>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
       DTS:refId="Package\Fecha"
       DTS:CreationName="Microsoft.Pipeline"
       DTS:Description="Data Flow Task"
@@ -4044,10 +5478,10 @@ public class Input0Buffer: ScriptBuffer
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="SC_9f3404b226f44742a2bd5227dfa312e0.Properties.Settings.get_Default():SC_9f3404b226f44742a2bd5227dfa312e0.Properties.Sett" +
+[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="SC_e6b8e41f485b4dceb85e74bd3162df52.Properties.Settings.get_Default():SC_e6b8e41f485b4dceb85e74bd3162df52.Properties.Sett" +
     "ings")]
 
-namespace SC_9f3404b226f44742a2bd5227dfa312e0.Properties {
+namespace SC_e6b8e41f485b4dceb85e74bd3162df52.Properties {
     
     
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
@@ -4064,7 +5498,7 @@ namespace SC_9f3404b226f44742a2bd5227dfa312e0.Properties {
 }
 ]]></arrayElement>
                     <arrayElement
-                      dataType="System.String"><![CDATA[SC_9f3404b226f44742a2bd5227dfa312e0.csproj]]></arrayElement>
+                      dataType="System.String"><![CDATA[SC_e6b8e41f485b4dceb85e74bd3162df52.csproj]]></arrayElement>
                     <arrayElement
                       dataType="System.String"><![CDATA[UTF8]]></arrayElement>
                     <arrayElement
@@ -4076,11 +5510,11 @@ namespace SC_9f3404b226f44742a2bd5227dfa312e0.Properties {
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{15902899-44d6-44ca-9324-30b7520ee7fa}</ProjectGuid>
+    <ProjectGuid>{50016578-035c-4722-a740-130a930a9fa7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SC_9f3404b226f44742a2bd5227dfa312e0</RootNamespace>
-    <AssemblyName>SC_9f3404b226f44742a2bd5227dfa312e0</AssemblyName>
+    <RootNamespace>SC_e6b8e41f485b4dceb85e74bd3162df52</RootNamespace>
+    <AssemblyName>SC_e6b8e41f485b4dceb85e74bd3162df52</AssemblyName>
     <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ResolveAssemblyReferenceIgnoreTargetFrameworkAttributeVersionMismatch>true</ResolveAssemblyReferenceIgnoreTargetFrameworkAttributeVersionMismatch>
@@ -4147,7 +5581,7 @@ namespace SC_9f3404b226f44742a2bd5227dfa312e0.Properties {
     <VisualStudio>
       <FlavorProperties GUID="{30D016F9-3734-4E33-A861-5E7D899E18F3}">
         <ProjectProperties HostName="ScriptComponent" HostPackage="{B3A685AA-7EAF-4BC6-9940-57959FA5AC07}" ApplicationType="usd" Language="cs" TemplatesPath="" DebugInfoExeName="" DebugInfoCommandLine="" DebugInfoWorkingDir="" IconImageList="" />
-        <Host Name="ScriptComponent" GeneratedNamespace="SC_9f3404b226f44742a2bd5227dfa312e0" IconIndex="0"></Host>
+        <Host Name="ScriptComponent" GeneratedNamespace="SC_e6b8e41f485b4dceb85e74bd3162df52" IconIndex="0"></Host>
         <ProjectClient>
           <HostIdentifier>SSIS_SC160</HostIdentifier>
         </ProjectClient>
@@ -4163,13 +5597,13 @@ namespace SC_9f3404b226f44742a2bd5227dfa312e0.Properties {
                       dataType="System.String"><![CDATA[<?xml version="1.0" encoding="UTF-16" standalone="yes"?>
 <c:Project xmlns:c="http://schemas.microsoft.com/codeprojectml/2010/08/main" xmlns:msb="http://schemas.microsoft.com/developer/msbuild/2003" runtimeVersion="4.0" schemaVersion="1.0">
   <msb:PropertyGroup>
-    <msb:CodeName>SC_9f3404b226f44742a2bd5227dfa312e0</msb:CodeName>
+    <msb:CodeName>SC_e6b8e41f485b4dceb85e74bd3162df52</msb:CodeName>
     <msb:Language>msBuild</msb:Language>
-    <msb:DisplayName>SC_9f3404b226f44742a2bd5227dfa312e0</msb:DisplayName>
-    <msb:ProjectId>{26E69512-F154-487F-A8E7-3431A36A00E7}</msb:ProjectId>
+    <msb:DisplayName>SC_e6b8e41f485b4dceb85e74bd3162df52</msb:DisplayName>
+    <msb:ProjectId>{0F018E38-2E25-46C4-9474-46A2051C45DB}</msb:ProjectId>
   </msb:PropertyGroup>
   <msb:ItemGroup>
-    <msb:Project Include="SC_9f3404b226f44742a2bd5227dfa312e0.csproj" />
+    <msb:Project Include="SC_e6b8e41f485b4dceb85e74bd3162df52.csproj" />
     <msb:File Include="main.cs" />
     <msb:File Include="BufferWrapper.cs" />
     <msb:File Include="ComponentWrapper.cs" />
@@ -4193,11 +5627,11 @@ using System.Runtime.CompilerServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 //
-[assembly: AssemblyTitle("SC_9f3404b226f44742a2bd5227dfa312e0")]
+[assembly: AssemblyTitle("SC_e6b8e41f485b4dceb85e74bd3162df52")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("SC_9f3404b226f44742a2bd5227dfa312e0")]
+[assembly: AssemblyProduct("SC_e6b8e41f485b4dceb85e74bd3162df52")]
 [assembly: AssemblyCopyright("Copyright @  2025")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -4240,14 +5674,14 @@ using System.Runtime.CompilerServices;
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="SC_9f3404b226f44742a2bd5227dfa312e0.Properties.Resources.get_ResourceManager():System.Resources.Resou" +
+[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="SC_e6b8e41f485b4dceb85e74bd3162df52.Properties.Resources.get_ResourceManager():System.Resources.Resou" +
     "rceManager")]
-[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="SC_9f3404b226f44742a2bd5227dfa312e0.Properties.Resources.get_Culture():System.Globalization.CultureIn" +
+[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="SC_e6b8e41f485b4dceb85e74bd3162df52.Properties.Resources.get_Culture():System.Globalization.CultureIn" +
     "fo")]
-[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="SC_9f3404b226f44742a2bd5227dfa312e0.Properties.Resources.set_Culture(System.Globalization.CultureInfo" +
+[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="SC_e6b8e41f485b4dceb85e74bd3162df52.Properties.Resources.set_Culture(System.Globalization.CultureInfo" +
     "):Void")]
 
-namespace SC_9f3404b226f44742a2bd5227dfa312e0.Properties {
+namespace SC_e6b8e41f485b4dceb85e74bd3162df52.Properties {
     
     
     /// <summary>
@@ -4275,7 +5709,7 @@ namespace SC_9f3404b226f44742a2bd5227dfa312e0.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if ((resourceMan == null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SC_9f3404b226f44742a2bd5227dfa312e0.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SC_e6b8e41f485b4dceb85e74bd3162df52.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -4309,11 +5743,11 @@ namespace SC_9f3404b226f44742a2bd5227dfa312e0.Properties {
                   <arrayElements
                     arrayElementCount="2">
                     <arrayElement
-                      dataType="System.String"><![CDATA[SC_9f3404b226f44742a2bd5227dfa312e0.dll]]></arrayElement>
+                      dataType="System.String"><![CDATA[SC_e6b8e41f485b4dceb85e74bd3162df52.dll]]></arrayElement>
                     <arrayElement
                       dataType="System.String"><![CDATA[TVqQAAMAAAAEAAAA//8AALgAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAgAAAAA4fug4AtAnNIbgBTM0hVGhpcyBwcm9ncmFtIGNhbm5vdCBiZSBydW4gaW4gRE9TIG1v
-ZGUuDQ0KJAAAAAAAAABQRQAATAEDAMG70WcAAAAAAAAAAOAAIiALATAAACIAAAAIAAAAAAAATkAA
+ZGUuDQ0KJAAAAAAAAABQRQAATAEDACt17WcAAAAAAAAAAOAAIiALATAAACIAAAAIAAAAAAAATkAA
 AAAgAAAAYAAAAAAAEAAgAAAAAgAABAAAAAAAAAAGAAAAAAAAAACgAAAAAgAAAAAAAAMAYIUAABAA
 ABAAAAAAEAAAEAAAAAAAABAAAAAAAAAAAAAAAPw/AABPAAAAAGAAAEgEAAAAAAAAAAAAAAAAAAAA
 AAAAAIAAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -4354,15 +5788,15 @@ ACNCbG9iAAAAAAAAAAIAAAFXF6ILCQsAAAD6ATMAFgAAAQAAADcAAAAJAAAAFQAAACQAAAAVAAAA
 AQAAAEIAAAATAAAAAwAAAAQAAAASAAAAEwAAAAIAAAACAAAAAQAAAAcAAAABAAAAAQAAAAMAAAAA
 AFQFAQAAAAAABgA3BGUIBgDLBGUIBgBQAzIIDwDZCAAABgB9A1cGBgAaBFcGBgD7A1cGBgCyBFcG
 BgBXBFcGBgBwBFcGBgCvA1cGBgDKA/wECgCLBD4CBgAECGUIBgCeBg8GBgB0Ag8GBgCUA2UIBgA5
-BWkJBgAFAg8GBgAYA2UIBgBvAg8GBgAOAmUIBgCYAGUIBgBFB2UIDgCNBtwJDgChAdwJBgDjAzII
+BWkJBgAFAg8GBgAYA2UIBgBvAg8GBgAOAmUIBgB0AGUIBgBFB2UIDgCNBtwJDgChAdwJBgDjAzII
 CgCFBz4CEgB2Bz4CCgDmBj4CCgAQCj4CBgCpCQ8GBgAzAzIIBgCWB4UIBgDMBkIGFgD4Aj4FFgBk
 Az4FFgC5Ai0GGgABAM4HBgAuBQ8GBgC7Bg8GHgAqAKYHHgAaAKYHfwCVCgAAHgA7AKYHBgDUAQ8G
-BgDoClcGDgCXAagGDgBjAhgBDgBpBtwJDgD3B9wJBgCpAA8GDgCABqgGBgCRAGkJBgDIAQ8GAAAA
+BgDoClcGDgCXAagGDgBjAhgBDgBpBtwJDgD3B9wJBgCFAA8GDgCABqgGBgBtAGkJBgDIAQ8GAAAA
 ANUAAAAAAAEAAQABABAAIgYAABAAAQABAAEAEABpBwAAcQABAAQAAQAQAPIJAAB9AAEAFQABABAA
-hwkAAIEAAwAZAAEAEAAjCQAAgQAEABoAAAAQAIwI6AiBAAUAHAAAARAAVgnoCJkABwAgAAMBEAB3
+hwkAAIEAAwAZAAEAEAAjCQAAgQAEABoAAAAQAIwI6AiBAAUAHAAAARAAVgnoCJkABwAgAAMBEABT
 AAAAVQAIACMABgCHCVoBBgAjCV4BAQAACmIBAQAACmIBEQAWBmYBEQCpAmsBEQCsAXABBgANA3QB
 BgBcB3cBBgBfCXsBBgDnAn8BBgDhBnQBBgAtCXQBBgBDAXQBBgCHAnQBBgBbCIMBBgDzAIMBAQCv
-AIYBAQDHAIoBAQCKAI4BAQDAAJIBUCAAAAAAxgDFCpkBAQDQIAAAAACGAOYAnwECAE8hAAAAAIYY
+AIYBAQDHAIoBAQBmAI4BAQDAAJIBUCAAAAAAxgDFCpkBAQDQIAAAAACGAOYAnwECAE8hAAAAAIYY
 JQgGAAkAVyEAAAAAhhglCGYACQBiIQAAAACGCNkCrAEMAHchAAAAAIYIvQWNAAwAgCEAAAAAhgjY
 BrEBDACVIQAAAACGCNIFjQAMAJ4hAAAAAIYIRQixAQwAsyEAAAAAhgjiBY0ADAC8IQAAAACGCDoB
 sQEMANEhAAAAAIYImAWNAAwA2iEAAAAAhgh5ArEBDADvIQAAAACGCKgFjQAMAPghAAAAAIYITQg7
@@ -4376,7 +5810,7 @@ APMAAAABAIsHAAACADEJAAADAPQGAAABAN4AAAACAPgBAAADAIsHAAAEAPQGAAABAIsHAAABAOAK
 AAABABYKAAABABYKAAABAPYEAAABADECCQBZAAkAJQgBABEAJQgGABkAJQgKACkAJQgQADEAJQgQ
 ADkAJQgQAEEAJQgQAEkAJQgQAFEAJQgQAFkAJQgQAGEAJQgQAGkAJQgGAIkAJQgVAKEAJQgGALEA
 eAoGALEAIQIbANkAJQgGAAkBJQgGACkBJQghAJEAEAgwAHEAyAkGAPkAJAE1AHkAvAE7ADkBGwg/
-AMEA8QJPAMEAPQpUAMEANQVhAOEAJQhmAOEAiwdwAOEAMQl0AOkAAgJ4AOEA/wV+AOkApgCDAOkA
+AMEA8QJPAMEAPQpUAMEANQVhAOEAJQhmAOEAiwdwAOEAMQl0AOkAAgJ4AOEA/wV+AOkAggCDAOkA
 KwWIAOEA3AqNAOEAsAmNAPkAJQgGAEEBgAmRAPkARQmZAAEBJQgGAPkAFwmfAFEBBgalAPkAsAqs
 AFkBgQqyAIEA5gG5AIEA5ArBABEBJQjHADEBJQgGAMkAJQgQANEAJQjgAIEBXwLnANEAkwnuAJEB
 6QT0AKkBUQFhAHEAhwGNAMEAcAH8AIEBWwEOAQwAEAgeARQAhwGNABQAyAk3AbkB0QIGAEEBogk8
@@ -4387,13 +5821,13 @@ AiMBcwDnAgkCmwArAikCmwArAoAEiwDnAigASgDPAAMAAQAGAA8ABwAQAAgAEgAAAN0C4QEAAMEF
 APUF5gEAAAcB7gEAAIAF5gEAABoF7gEAAJYH8gEAALEC+AEAAMAJ/gECAAUAAwACAAYABQACAAcA
 BwACAAgACQACAAkACwACAAoADQACAAsADwACAAwAEQACAA0AEwACAA4AFQACAA8AFwACABAAGQAC
 ABEAGwACABIAHQACABsAHwACAB0AIQACAB4AIwABAB8AIwACACAAJQAJAEYAHwAJAEgAIQAXAScB
-BIAAAAEAAAAAAAAAAAAAAAAAUwAAAAQAAAAAAAAAAAAAAEgBSAEAAAAAEAAAAAAAAAAAAAAAUQEg
+BIAAAAEAAAAAAAAAAAAAAAAAiwAAAAQAAAAAAAAAAAAAAEgBSAEAAAAAEAAAAAAAAAAAAAAAUQEg
 CgAAAAAEAAAAAAAAAAAAAABIARgBAAAAABAAAAAAAAAAAAAAAFEBQwoAAAAABAAAAAAAAAAAAAAA
 SAEPBgAAAAAQAAAAAAAAAAAAAABRASEHAAAAABAAAAAAAAAAAAAAAFEB/gYAAAAAAAAAAAEAAACW
 CAAACQACADUAXABxAAcBcQAtAQAAAElEVFNDb21wb25lbnRNZXRhRGF0YTEwMABJRFRTVmFyaWFi
-bGUxMDAASURUU1ZhcmlhYmxlczEwMABJRFRTRXZhbHVhdG9yQ29udGV4dDEwMABTQ185ZjM0MDRi
-MjI2ZjQ0NzQyYTJiZDUyMjdkZmEzMTJlMAA8TG9hZERpbUZlY2hhPmRfXzEAPD51X18xAFRhc2tg
-MQBUYXNrQXdhaXRlcmAxAEdldEludDMyADxjb25uZWN0aW9uPjVfXzIAPD51X18yADxjb21tYW5k
+bGUxMDAASURUU1ZhcmlhYmxlczEwMABJRFRTRXZhbHVhdG9yQ29udGV4dDEwMAA8TG9hZERpbUZl
+Y2hhPmRfXzEAPD51X18xAFRhc2tgMQBUYXNrQXdhaXRlcmAxAEdldEludDMyAFNDX2U2YjhlNDFm
+NDg1YjRkY2ViODVlNzRiZDMxNjJkZjUyADxjb25uZWN0aW9uPjVfXzIAPD51X18yADxjb21tYW5k
 PjVfXzMAPE1vZHVsZT4ASW5wdXRJRABMb2FkRGltRmVjaGEAbm9tYnJlRGlhU2VtYW5hAGdldF9O
 b21icmVEw61hU2VtYW5hAFN5c3RlbS5EYXRhAGdldF9Db21wb25lbnRNZXRhRGF0YQBnZXRfRMOt
 YQBkw61hAG1zY29ybGliAE9wZW5Bc3luYwBFeGVjdXRlTm9uUXVlcnlBc3luYwBBd2FpdFVuc2Fm
@@ -4414,7 +5848,7 @@ UHJvZHVjdEF0dHJpYnV0ZQBBc3NlbWJseUNvcHlyaWdodEF0dHJpYnV0ZQBTU0lTU2NyaXB0Q29t
 cG9uZW50RW50cnlQb2ludEF0dHJpYnV0ZQBBc3NlbWJseUNvbXBhbnlBdHRyaWJ1dGUAUnVudGlt
 ZUNvbXBhdGliaWxpdHlBdHRyaWJ1dGUAQWRkV2l0aFZhbHVlAHZhbHVlAFN5c3RlbS5SdW50aW1l
 LlZlcnNpb25pbmcAZ2V0X0Nvbm5lY3Rpb25TdHJpbmcAR2V0U3RyaW5nAGdldF9UYXNrAFN5c3Rl
-bS5Db21wb25lbnRNb2RlbABTQ185ZjM0MDRiMjI2ZjQ0NzQyYTJiZDUyMjdkZmEzMTJlMC5kbGwA
+bS5Db21wb25lbnRNb2RlbABTQ19lNmI4ZTQxZjQ4NWI0ZGNlYjg1ZTc0YmQzMTYyZGY1Mi5kbGwA
 Z2V0X05vbWJyZUTDrWFTZW1hbmFfSXNOdWxsAGdldF9Ew61hX0lzTnVsbABnZXRfVHJpbWVzdHJl
 X0lzTnVsbABnZXRfT3JkZXJEYXRlX0lzTnVsbABnZXRfQcOxb19Jc051bGwAZ2V0X01lc19Jc051
 bGwAZ2V0X05vbWJyZU1lc19Jc051bGwAZ2V0X0l0ZW0AU3lzdGVtAHJlc291cmNlTWFuAFNjcmlw
@@ -4428,9 +5862,9 @@ ZUJ1ZmZlcgBTY3JpcHRCdWZmZXIAZ2V0X1Jlc291cmNlTWFuYWdlcgBNaWNyb3NvZnQuU3FsU2Vy
 dmVyLkR0cy5SdW50aW1lLldyYXBwZXIATWljcm9zb2Z0LlNxbFNlcnZlci5EdHMuUGlwZWxpbmUu
 V3JhcHBlcgBTcWxQYXJhbWV0ZXIAVGFza0F3YWl0ZXIAR2V0QXdhaXRlcgBGaXJlRXJyb3IALmN0
 b3IALmNjdG9yAFN5c3RlbS5EaWFnbm9zdGljcwBnZXRfTWVzAGdldF9Ob21icmVNZXMAbm9tYnJl
-TWVzAFN5c3RlbS5SdW50aW1lLkNvbXBpbGVyU2VydmljZXMAU3lzdGVtLlJlc291cmNlcwBTQ185
-ZjM0MDRiMjI2ZjQ0NzQyYTJiZDUyMjdkZmEzMTJlMC5Qcm9wZXJ0aWVzLlJlc291cmNlcy5yZXNv
-dXJjZXMARGVidWdnaW5nTW9kZXMAU0NfOWYzNDA0YjIyNmY0NDc0MmEyYmQ1MjI3ZGZhMzEyZTAu
+TWVzAFN5c3RlbS5SdW50aW1lLkNvbXBpbGVyU2VydmljZXMAU3lzdGVtLlJlc291cmNlcwBTQ19l
+NmI4ZTQxZjQ4NWI0ZGNlYjg1ZTc0YmQzMTYyZGY1Mi5Qcm9wZXJ0aWVzLlJlc291cmNlcy5yZXNv
+dXJjZXMARGVidWdnaW5nTW9kZXMAU0NfZTZiOGU0MWY0ODViNGRjZWI4NWU3NGJkMzE2MmRmNTIu
 UHJvcGVydGllcwBnZXRfUmVhZE9ubHlWYXJpYWJsZXMAbWVzAEJ1ZmZlckNvbHVtbkluZGV4ZXMA
 R2V0Q29sdW1uSW5kZXhlcwBTZXR0aW5ncwA8PjRfX3RoaXMAU3lzdGVtLlRocmVhZGluZy5UYXNr
 cwBFcXVhbHMAQ29ubmVjdGlvbnMAZ2V0X1BhcmFtZXRlcnMAQ29uY2F0AE9iamVjdABFbmRPZlJv
@@ -4441,13 +5875,13 @@ dABJbnB1dDBfUHJvY2Vzc0lucHV0AE1vdmVOZXh0AEdldFZhbHVlV2l0aENvbnRleHQAU2NyaXB0
 Q29tcG9uZW50RXZhbENvbnRleHQAZ2V0X0V2YWx1YXRvckNvbnRleHQASW5wdXQwX1Byb2Nlc3NJ
 bnB1dFJvdwBOZXh0Um93AGdldF9Bc3NlbWJseQAAAAAAMUUAcgByAG8AcgAgAGEAbAAgAGMAYQBy
 AGcAYQByACAARABpAG0ARgBlAGMAaABhAAABAA9JAG4AcAB1AHQAIAAwAAAhQwBvAG4AbgBlAGMA
-dABpAG8AbgBTAHQAcgBpAG4AZwAAcVMAQwBfADkAZgAzADQAMAA0AGIAMgAyADYAZgA0ADQANwA0
-ADIAYQAyAGIAZAA1ADIAMgA3AGQAZgBhADMAMQAyAGUAMAAuAFAAcgBvAHAAZQByAHQAaQBlAHMA
+dABpAG8AbgBTAHQAcgBpAG4AZwAAcVMAQwBfAGUANgBiADgAZQA0ADEAZgA0ADgANQBiADQAZABj
+AGUAYgA4ADUAZQA3ADQAYgBkADMAMQA2ADIAZABmADUAMgAuAFAAcgBvAHAAZQByAHQAaQBlAHMA
 LgBSAGUAcwBvAHUAcgBjAGUAcwAAIWQAYgBvAC4ATABvAGEAZABEAGkAbQBGAGUAYwBoAGEAAA1A
 AEYAZQBjAGgAYQAACUAAQQDxAG8AAQlAAE0AZQBzAAAJQABEAO0AYQABFUAAVAByAGkAbQBlAHMA
 dAByAGUAABVAAE4AbwBtAGIAcgBlAE0AZQBzAAAhQABOAG8AbQBiAHIAZQBEAO0AYQBTAGUAbQBh
 AG4AYQABL0UAcgByAG8AcgAgAGUAbgAgAEwAbwBhAGQARABpAG0ARgBlAGMAaABhADoAIAAAAAAA
-iVkhPGJVbkGhqjP5WtfqoAAEIAEBCAMgAAEFIAEBEREEIAEBDgUgAQESQQUgAQESWQYgAQERgJEH
+qOtjeaU3ZkqE2EVygJWIlAAEIAEBCAMgAAEFIAEBEREEIAEBDgUgAQESQQUgAQESWQYgAQERgJEH
 BwMRORI9AgQgABE5BSAAEoCdAyAADgogBgEIDg4OCBACBAcBESQEAAARYQcwAQEBEB4ABAoBESQE
 IAASSQkgAwESdR0IEnkDBhJ1AwYdCAUgARFNCAQgAQIIBCABCAgEIAEOCAMgAAIHIAICDhGApQUg
 AR0ICAUgABKAqQYgARKArRwFAAASgLEGIAEcEoC1BwABEkERgLkFIAASgL0HIAIBDhKAvRAHBggS
@@ -4457,7 +5891,7 @@ Ej0It3pcVhk04IkIiYRdzYCAzJEDBhIUAwYSGAMGEn0EBhKAiQQGEoCNAwYSIAIGCAMGEWEDBhII
 AwYRTQIGDgMGEmUDBhJpAwYROQYGFRFdAQgFIAEBEgwMIAcSSRFNCAgICA4OBCAAEU0DIAAICSAE
 AQgOEnUSeQUgAQESfQUAABKAiQUAABKAjQYAAQESgI0EAAASIAMAAAEEKAARTQMoAAIDKAAIAygA
 DgUIABKAiQUIABKAjQQIABIgCAEACAAAAAAAHgEAAQBUAhZXcmFwTm9uRXhjZXB0aW9uVGhyb3dz
-AQgBAAIAAAAAACgBACNTQ185ZjM0MDRiMjI2ZjQ0NzQyYTJiZDUyMjdkZmEzMTJlMAAABQEAAAAA
+AQgBAAIAAAAAACgBACNTQ19lNmI4ZTQxZjQ4NWI0ZGNlYjg1ZTc0YmQzMTYyZGY1MgAABQEAAAAA
 FgEAEUNvcHlyaWdodCBAICAyMDI1AABJAQAaLk5FVEZyYW1ld29yayxWZXJzaW9uPXY0LjcBAFQO
 FEZyYW1ld29ya0Rpc3BsYXlOYW1lEi5ORVQgRnJhbWV3b3JrIDQuNyIBAB1TY3JpcHRNYWluKzxM
 b2FkRGltRmVjaGE+ZF9fMQAABAEAAAC0AAAAzsrvvgEAAACRAAAAbFN5c3RlbS5SZXNvdXJjZXMu
@@ -4480,16 +5914,16 @@ AHIARgBpAGwAZQBJAG4AZgBvAAAAAAAkAAQAAABUAHIAYQBuAHMAbABhAHQAaQBvAG4AAAAAAAAA
 sARMAwAAAQBTAHQAcgBpAG4AZwBGAGkAbABlAEkAbgBmAG8AAAAoAwAAAQAwADAAMAAwADAANABi
 ADAAAAAaAAEAAQBDAG8AbQBtAGUAbgB0AHMAAAAAAAAAIgABAAEAQwBvAG0AcABhAG4AeQBOAGEA
 bQBlAAAAAAAAAAAAcAAkAAEARgBpAGwAZQBEAGUAcwBjAHIAaQBwAHQAaQBvAG4AAAAAAFMAQwBf
-ADkAZgAzADQAMAA0AGIAMgAyADYAZgA0ADQANwA0ADIAYQAyAGIAZAA1ADIAMgA3AGQAZgBhADMA
-MQAyAGUAMAAAADAACAABAEYAaQBsAGUAVgBlAHIAcwBpAG8AbgAAAAAAMQAuADAALgAwAC4AMAAA
-AHAAKAABAEkAbgB0AGUAcgBuAGEAbABOAGEAbQBlAAAAUwBDAF8AOQBmADMANAAwADQAYgAyADIA
-NgBmADQANAA3ADQAMgBhADIAYgBkADUAMgAyADcAZABmAGEAMwAxADIAZQAwAC4AZABsAGwAAABI
+AGUANgBiADgAZQA0ADEAZgA0ADgANQBiADQAZABjAGUAYgA4ADUAZQA3ADQAYgBkADMAMQA2ADIA
+ZABmADUAMgAAADAACAABAEYAaQBsAGUAVgBlAHIAcwBpAG8AbgAAAAAAMQAuADAALgAwAC4AMAAA
+AHAAKAABAEkAbgB0AGUAcgBuAGEAbABOAGEAbQBlAAAAUwBDAF8AZQA2AGIAOABlADQAMQBmADQA
+OAA1AGIANABkAGMAZQBiADgANQBlADcANABiAGQAMwAxADYAMgBkAGYANQAyAC4AZABsAGwAAABI
 ABIAAQBMAGUAZwBhAGwAQwBvAHAAeQByAGkAZwBoAHQAAABDAG8AcAB5AHIAaQBnAGgAdAAgAEAA
 IAAgADIAMAAyADUAAAAqAAEAAQBMAGUAZwBhAGwAVAByAGEAZABlAG0AYQByAGsAcwAAAAAAAAAA
-AHgAKAABAE8AcgBpAGcAaQBuAGEAbABGAGkAbABlAG4AYQBtAGUAAABTAEMAXwA5AGYAMwA0ADAA
-NABiADIAMgA2AGYANAA0ADcANAAyAGEAMgBiAGQANQAyADIANwBkAGYAYQAzADEAMgBlADAALgBk
-AGwAbAAAAGgAJAABAFAAcgBvAGQAdQBjAHQATgBhAG0AZQAAAAAAUwBDAF8AOQBmADMANAAwADQA
-YgAyADIANgBmADQANAA3ADQAMgBhADIAYgBkADUAMgAyADcAZABmAGEAMwAxADIAZQAwAAAANAAI
+AHgAKAABAE8AcgBpAGcAaQBuAGEAbABGAGkAbABlAG4AYQBtAGUAAABTAEMAXwBlADYAYgA4AGUA
+NAAxAGYANAA4ADUAYgA0AGQAYwBlAGIAOAA1AGUANwA0AGIAZAAzADEANgAyAGQAZgA1ADIALgBk
+AGwAbAAAAGgAJAABAFAAcgBvAGQAdQBjAHQATgBhAG0AZQAAAAAAUwBDAF8AZQA2AGIAOABlADQA
+MQBmADQAOAA1AGIANABkAGMAZQBiADgANQBlADcANABiAGQAMwAxADYAMgBkAGYANQAyAAAANAAI
 AAEAUAByAG8AZAB1AGMAdABWAGUAcgBzAGkAbwBuAAAAMQAuADAALgAwAC4AMAAAADgACAABAEEA
 cwBzAGUAbQBiAGwAeQAgAFYAZQByAHMAaQBvAG4AAAAxAC4AMAAuADAALgAwAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -4515,7 +5949,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=]]></arrayElement>
                   dataType="System.String"
                   description="Specifies the name of the Microsoft Visual Studio Tools for Applications project. Project names must be unique within a package."
                   name="VSTAProjectName"
-                  typeConverter="NOTBROWSABLE">SC_9f3404b226f44742a2bd5227dfa312e0</property>
+                  typeConverter="NOTBROWSABLE">SC_e6b8e41f485b4dceb85e74bd3162df52</property>
                 <property
                   dataType="System.String"
                   description="Specifies the programming language used by the script."
@@ -4614,6 +6048,40 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=]]></arrayElement>
               startId="Package\Fecha\Get Fecha.Outputs[OLE DB Source Output]" />
           </paths>
         </pipeline>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Load FechaKey"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{51DEB64F-BB17-4BE8-8604-213FC7BEE17F}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Load FechaKey"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2022; © 2022 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{976A5F04-725A-4923-B1CB-405CADDB07B4}"
+          SQLTask:SqlStatementSource="update DimFecha set FechaKey = 1 where FechaID = 1&#xA;update DimFecha set FechaKey = 2 where FechaID = 2&#xA;update DimFecha set FechaKey = 3 where FechaID = 3&#xA;update DimFecha set FechaKey = 4 where FechaID = 4&#xA;update DimFecha set FechaKey = 5 where FechaID = 5&#xA;update DimFecha set FechaKey = 6 where FechaID = 6&#xA;update DimFecha set FechaKey = 7 where FechaID = 7&#xA;update DimFecha set FechaKey = 8 where FechaID = 8&#xA;update DimFecha set FechaKey = 9 where FechaID = 9&#xA;update DimFecha set FechaKey = 10 where FechaID = 10&#xA;update DimFecha set FechaKey = 11 where FechaID = 11&#xA;update DimFecha set FechaKey = 12 where FechaID = 12&#xA;update DimFecha set FechaKey = 13 where FechaID = 13&#xA;update DimFecha set FechaKey = 14 where FechaID = 14&#xA;update DimFecha set FechaKey = 15 where FechaID = 15&#xA;update DimFecha set FechaKey = 16 where FechaID = 16&#xA;update DimFecha set FechaKey = 17 where FechaID = 17&#xA;update DimFecha set FechaKey = 18 where FechaID = 18&#xA;update DimFecha set FechaKey = 19 where FechaID = 19&#xA;update DimFecha set FechaKey = 20 where FechaID = 20&#xA;update DimFecha set FechaKey = 21 where FechaID = 21&#xA;update DimFecha set FechaKey = 22 where FechaID = 22&#xA;update DimFecha set FechaKey = 23 where FechaID = 23&#xA;update DimFecha set FechaKey = 24 where FechaID = 24&#xA;update DimFecha set FechaKey = 25 where FechaID = 25&#xA;update DimFecha set FechaKey = 26 where FechaID = 26&#xA;update DimFecha set FechaKey = 27 where FechaID = 27&#xA;update DimFecha set FechaKey = 28 where FechaID = 28&#xA;update DimFecha set FechaKey = 29 where FechaID = 29&#xA;update DimFecha set FechaKey = 30 where FechaID = 30&#xA;update DimFecha set FechaKey = 31 where FechaID = 31&#xA;update DimFecha set FechaKey = 32 where FechaID = 32&#xA;update DimFecha set FechaKey = 33 where FechaID = 33&#xA;update DimFecha set FechaKey = 34 where FechaID = 34&#xA;update DimFecha set FechaKey = 35 where FechaID = 35&#xA;update DimFecha set FechaKey = 36 where FechaID = 36&#xA;update DimFecha set FechaKey = 37 where FechaID = 37&#xA;update DimFecha set FechaKey = 38 where FechaID = 38&#xA;update DimFecha set FechaKey = 39 where FechaID = 39&#xA;update DimFecha set FechaKey = 40 where FechaID = 40&#xA;update DimFecha set FechaKey = 41 where FechaID = 41&#xA;update DimFecha set FechaKey = 42 where FechaID = 42&#xA;update DimFecha set FechaKey = 43 where FechaID = 43&#xA;update DimFecha set FechaKey = 44 where FechaID = 44&#xA;update DimFecha set FechaKey = 45 where FechaID = 45&#xA;update DimFecha set FechaKey = 46 where FechaID = 46&#xA;update DimFecha set FechaKey = 47 where FechaID = 47&#xA;update DimFecha set FechaKey = 48 where FechaID = 48&#xA;update DimFecha set FechaKey = 49 where FechaID = 49&#xA;update DimFecha set FechaKey = 50 where FechaID = 50&#xA;update DimFecha set FechaKey = 51 where FechaID = 51&#xA;update DimFecha set FechaKey = 52 where FechaID = 52&#xA;update DimFecha set FechaKey = 53 where FechaID = 53&#xA;update DimFecha set FechaKey = 54 where FechaID = 54&#xA;update DimFecha set FechaKey = 55 where FechaID = 55&#xA;update DimFecha set FechaKey = 56 where FechaID = 56&#xA;update DimFecha set FechaKey = 57 where FechaID = 57&#xA;update DimFecha set FechaKey = 58 where FechaID = 58&#xA;update DimFecha set FechaKey = 59 where FechaID = 59&#xA;update DimFecha set FechaKey = 60 where FechaID = 60&#xA;update DimFecha set FechaKey = 61 where FechaID = 61&#xA;update DimFecha set FechaKey = 62 where FechaID = 62&#xA;update DimFecha set FechaKey = 63 where FechaID = 63&#xA;update DimFecha set FechaKey = 64 where FechaID = 64&#xA;update DimFecha set FechaKey = 65 where FechaID = 65&#xA;update DimFecha set FechaKey = 66 where FechaID = 66&#xA;update DimFecha set FechaKey = 67 where FechaID = 67&#xA;update DimFecha set FechaKey = 68 where FechaID = 68&#xA;update DimFecha set FechaKey = 69 where FechaID = 69&#xA;update DimFecha set FechaKey = 70 where FechaID = 70&#xA;update DimFecha set FechaKey = 71 where FechaID = 71&#xA;update DimFecha set FechaKey = 72 where FechaID = 72&#xA;update DimFecha set FechaKey = 73 where FechaID = 73&#xA;update DimFecha set FechaKey = 74 where FechaID = 74&#xA;update DimFecha set FechaKey = 75 where FechaID = 75&#xA;update DimFecha set FechaKey = 76 where FechaID = 76&#xA;update DimFecha set FechaKey = 77 where FechaID = 77&#xA;update DimFecha set FechaKey = 78 where FechaID = 78&#xA;update DimFecha set FechaKey = 79 where FechaID = 79&#xA;update DimFecha set FechaKey = 80 where FechaID = 80&#xA;update DimFecha set FechaKey = 81 where FechaID = 81&#xA;update DimFecha set FechaKey = 82 where FechaID = 82&#xA;update DimFecha set FechaKey = 83 where FechaID = 83&#xA;update DimFecha set FechaKey = 84 where FechaID = 84&#xA;update DimFecha set FechaKey = 85 where FechaID = 85&#xA;update DimFecha set FechaKey = 86 where FechaID = 86&#xA;update DimFecha set FechaKey = 87 where FechaID = 87&#xA;update DimFecha set FechaKey = 88 where FechaID = 88&#xA;update DimFecha set FechaKey = 89 where FechaID = 89&#xA;update DimFecha set FechaKey = 90 where FechaID = 90&#xA;update DimFecha set FechaKey = 91 where FechaID = 91&#xA;update DimFecha set FechaKey = 92 where FechaID = 92&#xA;update DimFecha set FechaKey = 93 where FechaID = 93&#xA;update DimFecha set FechaKey = 94 where FechaID = 94&#xA;update DimFecha set FechaKey = 95 where FechaID = 95&#xA;update DimFecha set FechaKey = 96 where FechaID = 96&#xA;update DimFecha set FechaKey = 97 where FechaID = 97&#xA;update DimFecha set FechaKey = 98 where FechaID = 98&#xA;update DimFecha set FechaKey = 99 where FechaID = 99&#xA;update DimFecha set FechaKey = 100 where FechaID = 100&#xA;update DimFecha set FechaKey = 101 where FechaID = 101&#xA;update DimFecha set FechaKey = 102 where FechaID = 102&#xA;update DimFecha set FechaKey = 103 where FechaID = 103&#xA;update DimFecha set FechaKey = 104 where FechaID = 104&#xA;update DimFecha set FechaKey = 105 where FechaID = 105&#xA;update DimFecha set FechaKey = 106 where FechaID = 106&#xA;update DimFecha set FechaKey = 107 where FechaID = 107&#xA;update DimFecha set FechaKey = 108 where FechaID = 108&#xA;update DimFecha set FechaKey = 109 where FechaID = 109&#xA;update DimFecha set FechaKey = 110 where FechaID = 110&#xA;update DimFecha set FechaKey = 111 where FechaID = 111&#xA;update DimFecha set FechaKey = 112 where FechaID = 112&#xA;update DimFecha set FechaKey = 113 where FechaID = 113&#xA;update DimFecha set FechaKey = 114 where FechaID = 114&#xA;update DimFecha set FechaKey = 115 where FechaID = 115&#xA;update DimFecha set FechaKey = 116 where FechaID = 116&#xA;update DimFecha set FechaKey = 117 where FechaID = 117&#xA;update DimFecha set FechaKey = 118 where FechaID = 118&#xA;update DimFecha set FechaKey = 119 where FechaID = 119&#xA;update DimFecha set FechaKey = 120 where FechaID = 120&#xA;update DimFecha set FechaKey = 121 where FechaID = 121&#xA;update DimFecha set FechaKey = 122 where FechaID = 122&#xA;update DimFecha set FechaKey = 123 where FechaID = 123&#xA;update DimFecha set FechaKey = 124 where FechaID = 124&#xA;update DimFecha set FechaKey = 125 where FechaID = 125&#xA;update DimFecha set FechaKey = 126 where FechaID = 126&#xA;update DimFecha set FechaKey = 127 where FechaID = 127&#xA;update DimFecha set FechaKey = 128 where FechaID = 128&#xA;update DimFecha set FechaKey = 129 where FechaID = 129&#xA;update DimFecha set FechaKey = 130 where FechaID = 130&#xA;update DimFecha set FechaKey = 131 where FechaID = 131&#xA;update DimFecha set FechaKey = 132 where FechaID = 132&#xA;update DimFecha set FechaKey = 133 where FechaID = 133&#xA;update DimFecha set FechaKey = 134 where FechaID = 134&#xA;update DimFecha set FechaKey = 135 where FechaID = 135&#xA;update DimFecha set FechaKey = 136 where FechaID = 136&#xA;update DimFecha set FechaKey = 137 where FechaID = 137&#xA;update DimFecha set FechaKey = 138 where FechaID = 138&#xA;update DimFecha set FechaKey = 139 where FechaID = 139&#xA;update DimFecha set FechaKey = 140 where FechaID = 140&#xA;update DimFecha set FechaKey = 141 where FechaID = 141&#xA;update DimFecha set FechaKey = 142 where FechaID = 142&#xA;update DimFecha set FechaKey = 143 where FechaID = 143&#xA;update DimFecha set FechaKey = 144 where FechaID = 144&#xA;update DimFecha set FechaKey = 145 where FechaID = 145&#xA;update DimFecha set FechaKey = 146 where FechaID = 146&#xA;update DimFecha set FechaKey = 147 where FechaID = 147&#xA;update DimFecha set FechaKey = 148 where FechaID = 148&#xA;update DimFecha set FechaKey = 149 where FechaID = 149&#xA;update DimFecha set FechaKey = 150 where FechaID = 150&#xA;update DimFecha set FechaKey = 151 where FechaID = 151&#xA;update DimFecha set FechaKey = 152 where FechaID = 152&#xA;update DimFecha set FechaKey = 153 where FechaID = 153&#xA;update DimFecha set FechaKey = 154 where FechaID = 154&#xA;update DimFecha set FechaKey = 155 where FechaID = 155&#xA;update DimFecha set FechaKey = 156 where FechaID = 156&#xA;update DimFecha set FechaKey = 157 where FechaID = 157&#xA;update DimFecha set FechaKey = 158 where FechaID = 158&#xA;update DimFecha set FechaKey = 159 where FechaID = 159&#xA;update DimFecha set FechaKey = 160 where FechaID = 160&#xA;update DimFecha set FechaKey = 161 where FechaID = 161&#xA;update DimFecha set FechaKey = 162 where FechaID = 162&#xA;update DimFecha set FechaKey = 163 where FechaID = 163&#xA;update DimFecha set FechaKey = 164 where FechaID = 164&#xA;update DimFecha set FechaKey = 165 where FechaID = 165&#xA;update DimFecha set FechaKey = 166 where FechaID = 166&#xA;update DimFecha set FechaKey = 167 where FechaID = 167&#xA;update DimFecha set FechaKey = 168 where FechaID = 168&#xA;update DimFecha set FechaKey = 169 where FechaID = 169&#xA;update DimFecha set FechaKey = 170 where FechaID = 170&#xA;update DimFecha set FechaKey = 171 where FechaID = 171&#xA;update DimFecha set FechaKey = 172 where FechaID = 172&#xA;update DimFecha set FechaKey = 173 where FechaID = 173&#xA;update DimFecha set FechaKey = 174 where FechaID = 174&#xA;update DimFecha set FechaKey = 175 where FechaID = 175&#xA;update DimFecha set FechaKey = 176 where FechaID = 176&#xA;update DimFecha set FechaKey = 177 where FechaID = 177&#xA;update DimFecha set FechaKey = 178 where FechaID = 178&#xA;update DimFecha set FechaKey = 179 where FechaID = 179&#xA;update DimFecha set FechaKey = 180 where FechaID = 180&#xA;update DimFecha set FechaKey = 181 where FechaID = 181&#xA;update DimFecha set FechaKey = 182 where FechaID = 182&#xA;update DimFecha set FechaKey = 183 where FechaID = 183&#xA;update DimFecha set FechaKey = 184 where FechaID = 184&#xA;update DimFecha set FechaKey = 185 where FechaID = 185&#xA;update DimFecha set FechaKey = 186 where FechaID = 186&#xA;update DimFecha set FechaKey = 187 where FechaID = 187&#xA;update DimFecha set FechaKey = 188 where FechaID = 188&#xA;update DimFecha set FechaKey = 189 where FechaID = 189&#xA;update DimFecha set FechaKey = 190 where FechaID = 190&#xA;update DimFecha set FechaKey = 191 where FechaID = 191&#xA;update DimFecha set FechaKey = 192 where FechaID = 192&#xA;update DimFecha set FechaKey = 193 where FechaID = 193&#xA;update DimFecha set FechaKey = 194 where FechaID = 194&#xA;update DimFecha set FechaKey = 195 where FechaID = 195&#xA;update DimFecha set FechaKey = 196 where FechaID = 196&#xA;update DimFecha set FechaKey = 197 where FechaID = 197&#xA;update DimFecha set FechaKey = 198 where FechaID = 198&#xA;update DimFecha set FechaKey = 199 where FechaID = 199&#xA;update DimFecha set FechaKey = 200 where FechaID = 200&#xA;update DimFecha set FechaKey = 201 where FechaID = 201&#xA;update DimFecha set FechaKey = 202 where FechaID = 202&#xA;update DimFecha set FechaKey = 203 where FechaID = 203&#xA;update DimFecha set FechaKey = 204 where FechaID = 204&#xA;update DimFecha set FechaKey = 205 where FechaID = 205&#xA;update DimFecha set FechaKey = 206 where FechaID = 206&#xA;update DimFecha set FechaKey = 207 where FechaID = 207&#xA;update DimFecha set FechaKey = 208 where FechaID = 208&#xA;update DimFecha set FechaKey = 209 where FechaID = 209&#xA;update DimFecha set FechaKey = 210 where FechaID = 210&#xA;update DimFecha set FechaKey = 211 where FechaID = 211&#xA;update DimFecha set FechaKey = 212 where FechaID = 212&#xA;update DimFecha set FechaKey = 213 where FechaID = 213&#xA;update DimFecha set FechaKey = 214 where FechaID = 214&#xA;update DimFecha set FechaKey = 215 where FechaID = 215&#xA;update DimFecha set FechaKey = 216 where FechaID = 216&#xA;update DimFecha set FechaKey = 217 where FechaID = 217&#xA;update DimFecha set FechaKey = 218 where FechaID = 218&#xA;update DimFecha set FechaKey = 219 where FechaID = 219&#xA;update DimFecha set FechaKey = 220 where FechaID = 220&#xA;update DimFecha set FechaKey = 221 where FechaID = 221&#xA;update DimFecha set FechaKey = 222 where FechaID = 222&#xA;update DimFecha set FechaKey = 223 where FechaID = 223&#xA;update DimFecha set FechaKey = 224 where FechaID = 224&#xA;update DimFecha set FechaKey = 225 where FechaID = 225&#xA;update DimFecha set FechaKey = 226 where FechaID = 226&#xA;update DimFecha set FechaKey = 227 where FechaID = 227&#xA;update DimFecha set FechaKey = 228 where FechaID = 228&#xA;update DimFecha set FechaKey = 229 where FechaID = 229&#xA;update DimFecha set FechaKey = 230 where FechaID = 230&#xA;update DimFecha set FechaKey = 231 where FechaID = 231&#xA;update DimFecha set FechaKey = 232 where FechaID = 232&#xA;update DimFecha set FechaKey = 233 where FechaID = 233&#xA;update DimFecha set FechaKey = 234 where FechaID = 234&#xA;update DimFecha set FechaKey = 235 where FechaID = 235&#xA;update DimFecha set FechaKey = 236 where FechaID = 236&#xA;update DimFecha set FechaKey = 237 where FechaID = 237&#xA;update DimFecha set FechaKey = 238 where FechaID = 238&#xA;update DimFecha set FechaKey = 239 where FechaID = 239&#xA;update DimFecha set FechaKey = 240 where FechaID = 240&#xA;update DimFecha set FechaKey = 241 where FechaID = 241&#xA;update DimFecha set FechaKey = 242 where FechaID = 242&#xA;update DimFecha set FechaKey = 243 where FechaID = 243&#xA;update DimFecha set FechaKey = 244 where FechaID = 244&#xA;update DimFecha set FechaKey = 245 where FechaID = 245&#xA;update DimFecha set FechaKey = 246 where FechaID = 246&#xA;update DimFecha set FechaKey = 247 where FechaID = 247&#xA;update DimFecha set FechaKey = 248 where FechaID = 248&#xA;update DimFecha set FechaKey = 249 where FechaID = 249&#xA;update DimFecha set FechaKey = 250 where FechaID = 250&#xA;update DimFecha set FechaKey = 251 where FechaID = 251&#xA;update DimFecha set FechaKey = 252 where FechaID = 252&#xA;update DimFecha set FechaKey = 253 where FechaID = 253&#xA;update DimFecha set FechaKey = 254 where FechaID = 254&#xA;update DimFecha set FechaKey = 255 where FechaID = 255&#xA;update DimFecha set FechaKey = 256 where FechaID = 256&#xA;update DimFecha set FechaKey = 257 where FechaID = 257&#xA;update DimFecha set FechaKey = 258 where FechaID = 258&#xA;update DimFecha set FechaKey = 259 where FechaID = 259&#xA;update DimFecha set FechaKey = 260 where FechaID = 260&#xA;update DimFecha set FechaKey = 261 where FechaID = 261&#xA;update DimFecha set FechaKey = 262 where FechaID = 262&#xA;update DimFecha set FechaKey = 263 where FechaID = 263&#xA;update DimFecha set FechaKey = 264 where FechaID = 264&#xA;update DimFecha set FechaKey = 265 where FechaID = 265&#xA;update DimFecha set FechaKey = 266 where FechaID = 266&#xA;update DimFecha set FechaKey = 267 where FechaID = 267&#xA;update DimFecha set FechaKey = 268 where FechaID = 268&#xA;update DimFecha set FechaKey = 269 where FechaID = 269&#xA;update DimFecha set FechaKey = 270 where FechaID = 270&#xA;update DimFecha set FechaKey = 271 where FechaID = 271&#xA;update DimFecha set FechaKey = 272 where FechaID = 272&#xA;update DimFecha set FechaKey = 273 where FechaID = 273&#xA;update DimFecha set FechaKey = 274 where FechaID = 274&#xA;update DimFecha set FechaKey = 275 where FechaID = 275&#xA;update DimFecha set FechaKey = 276 where FechaID = 276&#xA;update DimFecha set FechaKey = 277 where FechaID = 277&#xA;update DimFecha set FechaKey = 278 where FechaID = 278&#xA;update DimFecha set FechaKey = 279 where FechaID = 279&#xA;update DimFecha set FechaKey = 280 where FechaID = 280&#xA;update DimFecha set FechaKey = 281 where FechaID = 281&#xA;update DimFecha set FechaKey = 282 where FechaID = 282&#xA;update DimFecha set FechaKey = 283 where FechaID = 283&#xA;update DimFecha set FechaKey = 284 where FechaID = 284&#xA;update DimFecha set FechaKey = 285 where FechaID = 285&#xA;update DimFecha set FechaKey = 286 where FechaID = 286&#xA;update DimFecha set FechaKey = 287 where FechaID = 287&#xA;update DimFecha set FechaKey = 288 where FechaID = 288&#xA;update DimFecha set FechaKey = 289 where FechaID = 289&#xA;update DimFecha set FechaKey = 290 where FechaID = 290&#xA;update DimFecha set FechaKey = 291 where FechaID = 291&#xA;update DimFecha set FechaKey = 292 where FechaID = 292&#xA;update DimFecha set FechaKey = 293 where FechaID = 293&#xA;update DimFecha set FechaKey = 294 where FechaID = 294&#xA;update DimFecha set FechaKey = 295 where FechaID = 295&#xA;update DimFecha set FechaKey = 296 where FechaID = 296&#xA;update DimFecha set FechaKey = 297 where FechaID = 297&#xA;update DimFecha set FechaKey = 298 where FechaID = 298&#xA;update DimFecha set FechaKey = 299 where FechaID = 299&#xA;update DimFecha set FechaKey = 300 where FechaID = 300&#xA;update DimFecha set FechaKey = 301 where FechaID = 301&#xA;update DimFecha set FechaKey = 302 where FechaID = 302&#xA;update DimFecha set FechaKey = 303 where FechaID = 303&#xA;update DimFecha set FechaKey = 304 where FechaID = 304&#xA;update DimFecha set FechaKey = 305 where FechaID = 305&#xA;update DimFecha set FechaKey = 306 where FechaID = 306&#xA;update DimFecha set FechaKey = 307 where FechaID = 307&#xA;update DimFecha set FechaKey = 308 where FechaID = 308&#xA;update DimFecha set FechaKey = 309 where FechaID = 309&#xA;update DimFecha set FechaKey = 310 where FechaID = 310&#xA;update DimFecha set FechaKey = 311 where FechaID = 311&#xA;update DimFecha set FechaKey = 312 where FechaID = 312&#xA;update DimFecha set FechaKey = 313 where FechaID = 313&#xA;update DimFecha set FechaKey = 314 where FechaID = 314&#xA;update DimFecha set FechaKey = 315 where FechaID = 315&#xA;update DimFecha set FechaKey = 316 where FechaID = 316&#xA;update DimFecha set FechaKey = 317 where FechaID = 317&#xA;update DimFecha set FechaKey = 318 where FechaID = 318&#xA;update DimFecha set FechaKey = 319 where FechaID = 319&#xA;update DimFecha set FechaKey = 320 where FechaID = 320&#xA;update DimFecha set FechaKey = 321 where FechaID = 321&#xA;update DimFecha set FechaKey = 322 where FechaID = 322&#xA;update DimFecha set FechaKey = 323 where FechaID = 323&#xA;update DimFecha set FechaKey = 324 where FechaID = 324&#xA;update DimFecha set FechaKey = 325 where FechaID = 325&#xA;update DimFecha set FechaKey = 326 where FechaID = 326&#xA;update DimFecha set FechaKey = 327 where FechaID = 327&#xA;update DimFecha set FechaKey = 328 where FechaID = 328&#xA;update DimFecha set FechaKey = 329 where FechaID = 329&#xA;update DimFecha set FechaKey = 330 where FechaID = 330&#xA;update DimFecha set FechaKey = 331 where FechaID = 331&#xA;update DimFecha set FechaKey = 332 where FechaID = 332&#xA;update DimFecha set FechaKey = 333 where FechaID = 333&#xA;update DimFecha set FechaKey = 334 where FechaID = 334&#xA;update DimFecha set FechaKey = 335 where FechaID = 335&#xA;update DimFecha set FechaKey = 336 where FechaID = 336&#xA;update DimFecha set FechaKey = 337 where FechaID = 337&#xA;update DimFecha set FechaKey = 338 where FechaID = 338&#xA;update DimFecha set FechaKey = 339 where FechaID = 339&#xA;update DimFecha set FechaKey = 340 where FechaID = 340&#xA;update DimFecha set FechaKey = 341 where FechaID = 341&#xA;update DimFecha set FechaKey = 342 where FechaID = 342&#xA;update DimFecha set FechaKey = 343 where FechaID = 343&#xA;update DimFecha set FechaKey = 344 where FechaID = 344&#xA;update DimFecha set FechaKey = 345 where FechaID = 345&#xA;update DimFecha set FechaKey = 346 where FechaID = 346&#xA;update DimFecha set FechaKey = 347 where FechaID = 347&#xA;update DimFecha set FechaKey = 348 where FechaID = 348&#xA;update DimFecha set FechaKey = 349 where FechaID = 349&#xA;update DimFecha set FechaKey = 350 where FechaID = 350&#xA;update DimFecha set FechaKey = 351 where FechaID = 351&#xA;update DimFecha set FechaKey = 352 where FechaID = 352&#xA;update DimFecha set FechaKey = 353 where FechaID = 353&#xA;update DimFecha set FechaKey = 354 where FechaID = 354&#xA;update DimFecha set FechaKey = 355 where FechaID = 355&#xA;update DimFecha set FechaKey = 356 where FechaID = 356&#xA;update DimFecha set FechaKey = 357 where FechaID = 357&#xA;update DimFecha set FechaKey = 358 where FechaID = 358&#xA;update DimFecha set FechaKey = 359 where FechaID = 359&#xA;update DimFecha set FechaKey = 360 where FechaID = 360&#xA;update DimFecha set FechaKey = 361 where FechaID = 361&#xA;update DimFecha set FechaKey = 362 where FechaID = 362&#xA;update DimFecha set FechaKey = 363 where FechaID = 363&#xA;update DimFecha set FechaKey = 364 where FechaID = 364&#xA;update DimFecha set FechaKey = 365 where FechaID = 365&#xA;update DimFecha set FechaKey = 366 where FechaID = 366&#xA;update DimFecha set FechaKey = 367 where FechaID = 367&#xA;update DimFecha set FechaKey = 368 where FechaID = 368&#xA;update DimFecha set FechaKey = 369 where FechaID = 369&#xA;update DimFecha set FechaKey = 370 where FechaID = 370&#xA;update DimFecha set FechaKey = 371 where FechaID = 371&#xA;update DimFecha set FechaKey = 372 where FechaID = 372&#xA;update DimFecha set FechaKey = 373 where FechaID = 373&#xA;update DimFecha set FechaKey = 374 where FechaID = 374&#xA;update DimFecha set FechaKey = 375 where FechaID = 375&#xA;update DimFecha set FechaKey = 376 where FechaID = 376&#xA;update DimFecha set FechaKey = 377 where FechaID = 377&#xA;update DimFecha set FechaKey = 378 where FechaID = 378&#xA;update DimFecha set FechaKey = 379 where FechaID = 379&#xA;update DimFecha set FechaKey = 380 where FechaID = 380&#xA;update DimFecha set FechaKey = 381 where FechaID = 381&#xA;update DimFecha set FechaKey = 382 where FechaID = 382&#xA;update DimFecha set FechaKey = 383 where FechaID = 383&#xA;update DimFecha set FechaKey = 384 where FechaID = 384&#xA;update DimFecha set FechaKey = 385 where FechaID = 385&#xA;update DimFecha set FechaKey = 386 where FechaID = 386&#xA;update DimFecha set FechaKey = 387 where FechaID = 387&#xA;update DimFecha set FechaKey = 388 where FechaID = 388&#xA;update DimFecha set FechaKey = 389 where FechaID = 389&#xA;update DimFecha set FechaKey = 390 where FechaID = 390&#xA;update DimFecha set FechaKey = 391 where FechaID = 391&#xA;update DimFecha set FechaKey = 392 where FechaID = 392&#xA;update DimFecha set FechaKey = 393 where FechaID = 393&#xA;update DimFecha set FechaKey = 394 where FechaID = 394&#xA;update DimFecha set FechaKey = 395 where FechaID = 395&#xA;update DimFecha set FechaKey = 396 where FechaID = 396&#xA;update DimFecha set FechaKey = 397 where FechaID = 397&#xA;update DimFecha set FechaKey = 398 where FechaID = 398&#xA;update DimFecha set FechaKey = 399 where FechaID = 399&#xA;update DimFecha set FechaKey = 400 where FechaID = 400&#xA;update DimFecha set FechaKey = 401 where FechaID = 401&#xA;update DimFecha set FechaKey = 402 where FechaID = 402&#xA;update DimFecha set FechaKey = 403 where FechaID = 403&#xA;update DimFecha set FechaKey = 404 where FechaID = 404&#xA;update DimFecha set FechaKey = 405 where FechaID = 405&#xA;update DimFecha set FechaKey = 406 where FechaID = 406&#xA;update DimFecha set FechaKey = 407 where FechaID = 407&#xA;update DimFecha set FechaKey = 408 where FechaID = 408&#xA;update DimFecha set FechaKey = 409 where FechaID = 409&#xA;update DimFecha set FechaKey = 410 where FechaID = 410&#xA;update DimFecha set FechaKey = 411 where FechaID = 411&#xA;update DimFecha set FechaKey = 412 where FechaID = 412&#xA;update DimFecha set FechaKey = 413 where FechaID = 413&#xA;update DimFecha set FechaKey = 414 where FechaID = 414&#xA;update DimFecha set FechaKey = 415 where FechaID = 415&#xA;update DimFecha set FechaKey = 416 where FechaID = 416&#xA;update DimFecha set FechaKey = 417 where FechaID = 417&#xA;update DimFecha set FechaKey = 418 where FechaID = 418&#xA;update DimFecha set FechaKey = 419 where FechaID = 419&#xA;update DimFecha set FechaKey = 420 where FechaID = 420&#xA;update DimFecha set FechaKey = 421 where FechaID = 421&#xA;update DimFecha set FechaKey = 422 where FechaID = 422&#xA;update DimFecha set FechaKey = 423 where FechaID = 423&#xA;update DimFecha set FechaKey = 424 where FechaID = 424&#xA;update DimFecha set FechaKey = 425 where FechaID = 425&#xA;update DimFecha set FechaKey = 426 where FechaID = 426&#xA;update DimFecha set FechaKey = 427 where FechaID = 427&#xA;update DimFecha set FechaKey = 428 where FechaID = 428&#xA;update DimFecha set FechaKey = 429 where FechaID = 429&#xA;update DimFecha set FechaKey = 430 where FechaID = 430&#xA;update DimFecha set FechaKey = 431 where FechaID = 431&#xA;update DimFecha set FechaKey = 432 where FechaID = 432&#xA;update DimFecha set FechaKey = 433 where FechaID = 433&#xA;update DimFecha set FechaKey = 434 where FechaID = 434&#xA;update DimFecha set FechaKey = 435 where FechaID = 435&#xA;update DimFecha set FechaKey = 436 where FechaID = 436&#xA;update DimFecha set FechaKey = 437 where FechaID = 437&#xA;update DimFecha set FechaKey = 438 where FechaID = 438&#xA;update DimFecha set FechaKey = 439 where FechaID = 439&#xA;update DimFecha set FechaKey = 440 where FechaID = 440&#xA;update DimFecha set FechaKey = 441 where FechaID = 441&#xA;update DimFecha set FechaKey = 442 where FechaID = 442&#xA;update DimFecha set FechaKey = 443 where FechaID = 443&#xA;update DimFecha set FechaKey = 444 where FechaID = 444&#xA;update DimFecha set FechaKey = 445 where FechaID = 445&#xA;update DimFecha set FechaKey = 446 where FechaID = 446&#xA;update DimFecha set FechaKey = 447 where FechaID = 447&#xA;update DimFecha set FechaKey = 448 where FechaID = 448&#xA;update DimFecha set FechaKey = 449 where FechaID = 449&#xA;update DimFecha set FechaKey = 450 where FechaID = 450&#xA;update DimFecha set FechaKey = 451 where FechaID = 451&#xA;update DimFecha set FechaKey = 452 where FechaID = 452&#xA;update DimFecha set FechaKey = 453 where FechaID = 453&#xA;update DimFecha set FechaKey = 454 where FechaID = 454&#xA;update DimFecha set FechaKey = 455 where FechaID = 455&#xA;update DimFecha set FechaKey = 456 where FechaID = 456&#xA;update DimFecha set FechaKey = 457 where FechaID = 457&#xA;update DimFecha set FechaKey = 458 where FechaID = 458&#xA;update DimFecha set FechaKey = 459 where FechaID = 459&#xA;update DimFecha set FechaKey = 460 where FechaID = 460&#xA;update DimFecha set FechaKey = 461 where FechaID = 461&#xA;update DimFecha set FechaKey = 462 where FechaID = 462&#xA;update DimFecha set FechaKey = 463 where FechaID = 463&#xA;update DimFecha set FechaKey = 464 where FechaID = 464&#xA;update DimFecha set FechaKey = 465 where FechaID = 465&#xA;update DimFecha set FechaKey = 466 where FechaID = 466&#xA;update DimFecha set FechaKey = 467 where FechaID = 467&#xA;update DimFecha set FechaKey = 468 where FechaID = 468&#xA;update DimFecha set FechaKey = 469 where FechaID = 469&#xA;update DimFecha set FechaKey = 470 where FechaID = 470&#xA;update DimFecha set FechaKey = 471 where FechaID = 471&#xA;update DimFecha set FechaKey = 472 where FechaID = 472&#xA;update DimFecha set FechaKey = 473 where FechaID = 473&#xA;update DimFecha set FechaKey = 474 where FechaID = 474&#xA;update DimFecha set FechaKey = 475 where FechaID = 475&#xA;update DimFecha set FechaKey = 476 where FechaID = 476&#xA;update DimFecha set FechaKey = 477 where FechaID = 477&#xA;update DimFecha set FechaKey = 478 where FechaID = 478&#xA;update DimFecha set FechaKey = 479 where FechaID = 479&#xA;update DimFecha set FechaKey = 480 where FechaID = 480" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Load RegionKey"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{3D7D9E68-1A46-4EC8-A016-ACFFCC5CE15D}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Load RegionKey"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2022; © 2022 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{976A5F04-725A-4923-B1CB-405CADDB07B4}"
+          SQLTask:SqlStatementSource="update DimRegion set RegionKey = 1 where RegionID = 1&#xA;update DimRegion set RegionKey = 2 where RegionID = 2&#xA;update DimRegion set RegionKey = 3 where RegionID = 3&#xA;update DimRegion set RegionKey = 4 where RegionID = 4&#xA;update DimRegion set RegionKey = 5 where RegionID = 5&#xA;update DimRegion set RegionKey = 6 where RegionID = 6&#xA;update DimRegion set RegionKey = 7 where RegionID = 7&#xA;update DimRegion set RegionKey = 8 where RegionID = 8&#xA;update DimRegion set RegionKey = 9 where RegionID = 9&#xA;update DimRegion set RegionKey = 10 where RegionID = 10&#xA;update DimRegion set RegionKey = 11 where RegionID = 11&#xA;update DimRegion set RegionKey = 12 where RegionID = 12&#xA;update DimRegion set RegionKey = 13 where RegionID = 13&#xA;update DimRegion set RegionKey = 14 where RegionID = 14&#xA;update DimRegion set RegionKey = 15 where RegionID = 15&#xA;update DimRegion set RegionKey = 16 where RegionID = 16&#xA;update DimRegion set RegionKey = 17 where RegionID = 17&#xA;update DimRegion set RegionKey = 18 where RegionID = 18&#xA;update DimRegion set RegionKey = 19 where RegionID = 19" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
       </DTS:ObjectData>
     </DTS:Executable>
     <DTS:Executable
@@ -7799,11 +9267,11 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==]]></arrayElement>
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 1]"
       DTS:CreationName=""
-      DTS:DTSID="{1ACA14DB-32FC-4C1A-976D-EC8B535D7E87}"
+      DTS:DTSID="{4F991187-6CD9-4D8C-AD0A-40AC413F6E2C}"
       DTS:From="Package\Fecha"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 1"
-      DTS:To="Package\Productos" />
+      DTS:To="Package\Load FechaKey" />
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 2]"
       DTS:CreationName=""
@@ -7815,11 +9283,11 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==]]></arrayElement>
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 3]"
       DTS:CreationName=""
-      DTS:DTSID="{C5A9CE2A-E3EF-4349-AEAF-5598CE0D1029}"
+      DTS:DTSID="{2CA486B0-4BB4-4454-AACD-DFA8E88799F9}"
       DTS:From="Package\Region"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 3"
-      DTS:To="Package\Transportista" />
+      DTS:To="Package\Load RegionKey" />
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 4]"
       DTS:CreationName=""
@@ -7836,6 +9304,38 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==]]></arrayElement>
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 5"
       DTS:To="Package\Clientes" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 6]"
+      DTS:CreationName=""
+      DTS:DTSID="{D37E96EC-3093-4314-A0A1-B6721B153F29}"
+      DTS:From="Package\Clean Tables"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 6"
+      DTS:To="Package\Categories" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 7]"
+      DTS:CreationName=""
+      DTS:DTSID="{D67C8538-582E-4859-9394-1E64FB087547}"
+      DTS:From="Package\Load FechaKey"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 7"
+      DTS:To="Package\Productos" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 8]"
+      DTS:CreationName=""
+      DTS:DTSID="{575B44F1-D25F-45FF-9198-9FE4E20DE7CF}"
+      DTS:From="Package\Load RegionKey"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 8"
+      DTS:To="Package\Transportista" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 9]"
+      DTS:CreationName=""
+      DTS:DTSID="{09C65DF7-871A-442A-9BDA-78BC3594F4B8}"
+      DTS:From="Package\Clientes"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 9"
+      DTS:To="Package\FactVentas" />
   </DTS:PrecedenceConstraints>
   <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
 <!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
@@ -7848,41 +9348,61 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==]]></arrayElement>
     design-time-name="Package">
     <LayoutInfo>
       <GraphLayout
-        Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        Capacity="32" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
           Size="128.8,41.6"
           Id="Package\Categories"
           TopLeft="106.944438601258,106.166665928397" />
         <NodeLayout
+          Size="116,41.6"
+          Id="Package\Clientes"
+          TopLeft="121.111104493892,595.666662839717" />
+        <NodeLayout
+          Size="130.4,41.6"
+          Id="Package\Empleados"
+          TopLeft="144.999992077549,370.044442005643" />
+        <NodeLayout
           Size="107.2,41.6"
           Id="Package\Fecha"
           TopLeft="152.083325023867,188.499998689195" />
+        <NodeLayout
+          Size="125.6,41.6"
+          Id="Package\Productos"
+          TopLeft="122.777771069496,287.877775775911" />
+        <NodeLayout
+          Size="111.2,41.6"
+          Id="Package\Region"
+          TopLeft="145.694436484051,444.099997194574" />
+        <NodeLayout
+          Size="139.2,41.6"
+          Id="Package\Transportista"
+          TopLeft="103.47221656875,528.099997375376" />
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint]"
           TopLeft="171.344438601258,147.766665928397">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="34.338886422609,40.7333327607975"
+              EndConnector="34.338886422609,40.733332760798"
               Start="0,0"
-              End="34.338886422609,33.2333327607975">
+              End="34.338886422609,33.233332760798">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,16.3666663803988" />
+                    End="0,16.366666380399" />
                   <mssgle:CubicBezierSegment
-                    Point1="0,16.3666663803988"
-                    Point2="0,20.3666663803988"
-                    Point3="4,20.3666663803988" />
+                    Point1="0,16.366666380399"
+                    Point2="0,20.366666380399"
+                    Point3="4,20.366666380399" />
                   <mssgle:LineSegment
-                    End="30.338886422609,20.3666663803988" />
+                    End="30.338886422609,20.366666380399" />
                   <mssgle:CubicBezierSegment
-                    Point1="30.338886422609,20.3666663803988"
-                    Point2="34.338886422609,20.3666663803988"
-                    Point3="34.338886422609,24.3666663803988" />
+                    Point1="30.338886422609,20.366666380399"
+                    Point2="34.338886422609,20.366666380399"
+                    Point3="34.338886422609,24.366666380399" />
                   <mssgle:LineSegment
-                    End="34.338886422609,33.2333327607975" />
+                    End="34.338886422609,33.233332760798" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -7891,36 +9411,32 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==]]></arrayElement>
             <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
-        <NodeLayout
-          Size="125.6,41.6"
-          Id="Package\Productos"
-          TopLeft="119.444437918288,263.611109277992" />
         <EdgeLayout
-          Id="Package.PrecedenceConstraints[Constraint 1]"
-          TopLeft="205.683325023867,230.099998689195">
+          Id="Package.PrecedenceConstraints[Constraint 2]"
+          TopLeft="185.577771069496,329.477775775911">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="-23.4388871055787,33.5111105887977"
+              EndConnector="24.6222210080533,40.5666662297318"
               Start="0,0"
-              End="-23.4388871055787,26.0111105887977">
+              End="24.6222210080533,33.0666662297318">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,12.7555552943988" />
+                    End="0,16.2833331148659" />
                   <mssgle:CubicBezierSegment
-                    Point1="0,12.7555552943988"
-                    Point2="0,16.7555552943988"
-                    Point3="-4,16.7555552943988" />
+                    Point1="0,16.2833331148659"
+                    Point2="0,20.2833331148659"
+                    Point3="4,20.2833331148659" />
                   <mssgle:LineSegment
-                    End="-19.4388871055787,16.7555552943988" />
+                    End="20.6222210080533,20.2833331148659" />
                   <mssgle:CubicBezierSegment
-                    Point1="-19.4388871055787,16.7555552943988"
-                    Point2="-23.4388871055787,16.7555552943988"
-                    Point3="-23.4388871055787,20.7555552943988" />
+                    Point1="20.6222210080533,20.2833331148659"
+                    Point2="24.6222210080533,20.2833331148659"
+                    Point3="24.6222210080533,24.2833331148659" />
                   <mssgle:LineSegment
-                    End="-23.4388871055787,26.0111105887977" />
+                    End="24.6222210080533,33.0666662297318" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -7929,21 +9445,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==]]></arrayElement>
             <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
-        <NodeLayout
-          Size="116,41.6"
-          Id="Package\Clientes"
-          TopLeft="140.277770113338,573.999996323718" />
-        <NodeLayout
-          Size="130.4,41.6"
-          Id="Package\Empleados"
-          TopLeft="141.666658926341,345.777775507724" />
-        <NodeLayout
-          Size="111.2,41.6"
-          Id="Package\Region"
-          TopLeft="142.361103332843,419.833330696655" />
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 4]"
-          TopLeft="206.866658926341,387.377775507724">
+          TopLeft="210.199992077549,411.644442005643">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
@@ -7976,31 +9480,19 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==]]></arrayElement>
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package.PrecedenceConstraints[Constraint 2]"
-          TopLeft="182.244437918288,305.211109277992">
+          Id="Package.PrecedenceConstraints[Constraint 5]"
+          TopLeft="176.091660531321,569.699997375376">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="24.6222210080533,40.5666662297318"
+              EndConnector="0,25.9666654643413"
               Start="0,0"
-              End="24.6222210080533,33.0666662297318">
+              End="0,18.4666654643413">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,16.2833331148659" />
-                  <mssgle:CubicBezierSegment
-                    Point1="0,16.2833331148659"
-                    Point2="0,20.2833331148659"
-                    Point3="4,20.2833331148659" />
-                  <mssgle:LineSegment
-                    End="20.6222210080533,20.2833331148659" />
-                  <mssgle:CubicBezierSegment
-                    Point1="20.6222210080533,20.2833331148659"
-                    Point2="24.6222210080533,20.2833331148659"
-                    Point3="24.6222210080533,24.2833331148659" />
-                  <mssgle:LineSegment
-                    End="24.6222210080533,33.0666662297318" />
+                    End="0,18.4666654643413" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -8010,23 +9502,73 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==]]></arrayElement>
           </EdgeLayout.Labels>
         </EdgeLayout>
         <NodeLayout
-          Size="139.2,41.6"
-          Id="Package\Transportista"
-          TopLeft="128.47221520281,490.833330967857" />
+          Size="140,41.6"
+          Id="Package\Clean Tables"
+          TopLeft="140.83332563854,18.4666666606399" />
         <EdgeLayout
-          Id="Package.PrecedenceConstraints[Constraint 3]"
-          TopLeft="198.016659267826,461.433330696656">
+          Id="Package.PrecedenceConstraints[Constraint 6]"
+          TopLeft="210.83332563854,60.0666666606399">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,29.4000002712012"
+              EndConnector="-39.4888870372816,46.0999992677571"
               Start="0,0"
-              End="0,21.9000002712012">
+              End="-39.4888870372816,38.5999992677571">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,21.9000002712012" />
+                    End="0,19.0499996338785" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,19.0499996338785"
+                    Point2="0,23.0499996338785"
+                    Point3="-4,23.0499996338785" />
+                  <mssgle:LineSegment
+                    End="-35.4888870372816,23.0499996338785" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-35.4888870372816,23.0499996338785"
+                    Point2="-39.4888870372816,23.0499996338785"
+                    Point3="-39.4888870372816,27.0499996338785" />
+                  <mssgle:LineSegment
+                    End="-39.4888870372816,38.5999992677571" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="151.2,41.6"
+          Id="Package\Load FechaKey"
+          TopLeft="299.999983608723,229.666665069593" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 1]"
+          TopLeft="259.283325023867,209.299998689195">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="40.7166585848564,35.5666663803983"
+              Start="0,0"
+              End="33.2166585848564,35.5666663803983">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="19.5251805156948,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="19.5251805156948,0"
+                    Point2="23.5251805156948,0"
+                    Point3="23.5251805156948,4" />
+                  <mssgle:LineSegment
+                    End="23.5251805156948,31.5666663803983" />
+                  <mssgle:CubicBezierSegment
+                    Point1="23.5251805156948,31.5666663803983"
+                    Point2="23.5251805156948,35.5666663803983"
+                    Point3="27.5251805156948,35.5666663803983" />
+                  <mssgle:LineSegment
+                    End="33.2166585848564,35.5666663803983" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -8036,19 +9578,141 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==]]></arrayElement>
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package.PrecedenceConstraints[Constraint 5]"
-          TopLeft="198.174992658074,532.433330967857">
+          Id="Package.PrecedenceConstraints[Constraint 7]"
+          TopLeft="299.999983608723,256.066665069593">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,41.5666653558611"
+              EndConnector="-51.6222125392273,52.6111107063179"
               Start="0,0"
-              End="0,34.0666653558611">
+              End="-44.1222125392273,52.6111107063179">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,34.0666653558611" />
+                    End="-17.7960452943404,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-17.7960452943404,0"
+                    Point2="-21.7960452943404,0"
+                    Point3="-21.7960452943404,4" />
+                  <mssgle:LineSegment
+                    End="-21.7960452943404,48.6111107063179" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-21.7960452943404,48.6111107063179"
+                    Point2="-21.7960452943404,52.6111107063179"
+                    Point3="-25.7960452943404,52.6111107063179" />
+                  <mssgle:LineSegment
+                    End="-44.1222125392273,52.6111107063179" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="155.2,41.6"
+          Id="Package\Load RegionKey"
+          TopLeft="312.499982925753,495.999997034868" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 3]"
+          TopLeft="256.894436484051,464.899997194574">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="55.6055464417024,46.2999998402934"
+              Start="0,0"
+              End="48.1055464417024,46.2999998402934">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="28.1276490552059,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="28.1276490552059,0"
+                    Point2="32.1276490552059,0"
+                    Point3="32.1276490552059,4" />
+                  <mssgle:LineSegment
+                    End="32.1276490552059,42.2999998402934" />
+                  <mssgle:CubicBezierSegment
+                    Point1="32.1276490552059,42.2999998402934"
+                    Point2="32.1276490552059,46.2999998402934"
+                    Point3="36.1276490552059,46.2999998402934" />
+                  <mssgle:LineSegment
+                    End="48.1055464417024,46.2999998402934" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 8]"
+          TopLeft="312.499982925753,522.399997034868">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-69.8277663570037,26.5000003405082"
+              Start="0,0"
+              End="-62.3277663570037,26.5000003405082">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="-25.4828346840682,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-25.4828346840682,0"
+                    Point2="-29.4828346840682,0"
+                    Point3="-29.4828346840682,4" />
+                  <mssgle:LineSegment
+                    End="-29.4828346840682,22.5000003405082" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-29.4828346840682,22.5000003405082"
+                    Point2="-29.4828346840682,26.5000003405082"
+                    Point3="-33.4828346840682,26.5000003405082" />
+                  <mssgle:LineSegment
+                    End="-62.3277663570037,26.5000003405082" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="131.2,41.6"
+          Id="Package\FactVentas"
+          TopLeft="159.166657970184,679.533329253263" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 9]"
+          TopLeft="179.111104493892,637.266662839717">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="45.655553476292,42.2666664135455"
+              Start="0,0"
+              End="45.655553476292,34.7666664135455">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,17.1333332067728" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,17.1333332067728"
+                    Point2="0,21.1333332067728"
+                    Point3="4,21.1333332067728" />
+                  <mssgle:LineSegment
+                    End="41.655553476292,21.1333332067728" />
+                  <mssgle:CubicBezierSegment
+                    Point1="41.655553476292,21.1333332067728"
+                    Point2="45.655553476292,21.1333332067728"
+                    Point3="45.655553476292,25.1333332067728" />
+                  <mssgle:LineSegment
+                    End="45.655553476292,34.7666664135455" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -8064,15 +9728,15 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==]]></arrayElement>
     design-time-name="Package\Categories">
     <LayoutInfo>
       <GraphLayout
-        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
-        <NodeLayout
-          Size="148,41.6"
-          Id="Package\Categories\Get Categorias"
-          TopLeft="264.444429995838,162.355554426555" />
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
         <NodeLayout
           Size="154.4,41.6"
           Id="Package\Categories\Load Categorias"
           TopLeft="258.749985862524,256.966664879753" />
+        <NodeLayout
+          Size="148,41.6"
+          Id="Package\Categories\Get Categorias"
+          TopLeft="264.444429995838,162.355554426555" />
         <EdgeLayout
           Id="Package\Categories.Paths[OLE DB Source Output]"
           TopLeft="337.197207929181,203.955554426555">
@@ -8092,7 +9756,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==]]></arrayElement>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
@@ -8100,6 +9766,100 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==]]></arrayElement>
   </TaskHost>
   <PipelineComponentMetadata
     design-time-name="Package\Categories\Get Categorias">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <TaskHost
+    design-time-name="Package\Clientes">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="136,41.6"
+          Id="Package\Clientes\Get Clientes"
+          TopLeft="390.999994173646,242.999996379018" />
+        <NodeLayout
+          Size="141.6,41.6"
+          Id="Package\Clientes\Load Clientes"
+          TopLeft="389.333327531815,363.333327919245" />
+        <EdgeLayout
+          Id="Package\Clientes.Paths[OLE DB Source Output]"
+          TopLeft="459.56666085273,284.599996379018">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,78.733331540227"
+              Start="0,0"
+              End="0,71.233331540227">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,71.233331540227" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\Clientes\Get Clientes">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <TaskHost
+    design-time-name="Package\Empleados">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        <NodeLayout
+          Size="144.8,41.6"
+          Id="Package\Empleados\Get Empleado"
+          TopLeft="177.714283066137,83.9999987483024" />
+        <NodeLayout
+          Size="151.2,41.6"
+          Id="Package\Empleados\Load Empleado"
+          TopLeft="176.714283081038,198.999997034669" />
+        <EdgeLayout
+          Id="Package\Empleados.Paths[OLE DB Source Output]"
+          TopLeft="251.214283073587,125.599998748302">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,73.3999982863665"
+              Start="0,0"
+              End="0,65.8999982863665">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,65.8999982863665" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\Empleados\Get Empleado">
     <Properties>
       <Property>
         <Name>DataSourceViewID</Name>
@@ -8118,21 +9878,33 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==]]></arrayElement>
         <NodeLayout
           Size="133.6,41.6"
           Id="Package\Fecha\Load Fecha"
-          TopLeft="405.384609343914,313.846149169482" />
+          TopLeft="465.714278774602,326.428566564407" />
         <EdgeLayout
           Id="Package\Fecha.Paths[OLE DB Source Output]"
-          TopLeft="473.892301602318,244.599996975064">
+          TopLeft="475.599993860722,244.599996975064">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,69.2461521944175"
+              EndConnector="56.9142849138804,81.8285695893427"
               Start="0,0"
-              End="0,61.7461521944175">
+              End="56.9142849138804,74.3285695893427">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,61.7461521944175" />
+                    End="0,36.9142847946713" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,36.9142847946713"
+                    Point2="0,40.9142847946713"
+                    Point3="4,40.9142847946713" />
+                  <mssgle:LineSegment
+                    End="52.9142849138804,40.9142847946713" />
+                  <mssgle:CubicBezierSegment
+                    Point1="52.9142849138804,40.9142847946713"
+                    Point2="56.9142849138804,40.9142847946713"
+                    Point3="56.9142849138804,44.9142847946713" />
+                  <mssgle:LineSegment
+                    End="56.9142849138804,74.3285695893427" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -8211,110 +9983,18 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==]]></arrayElement>
     </Properties>
   </PipelineComponentMetadata>
   <TaskHost
-    design-time-name="Package\Clientes">
-    <LayoutInfo>
-      <GraphLayout
-        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
-        <NodeLayout
-          Size="136,41.6"
-          Id="Package\Clientes\Get Clientes"
-          TopLeft="390.999994173646,242.999996379018" />
-        <NodeLayout
-          Size="141.6,41.6"
-          Id="Package\Clientes\Load Clientes"
-          TopLeft="389.333327531815,363.333327919245" />
-        <EdgeLayout
-          Id="Package\Clientes.Paths[OLE DB Source Output]"
-          TopLeft="459.56666085273,284.599996379018">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,78.733331540227"
-              Start="0,0"
-              End="0,71.233331540227">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,71.233331540227" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-      </GraphLayout>
-    </LayoutInfo>
-  </TaskHost>
-  <PipelineComponentMetadata
-    design-time-name="Package\Clientes\Get Clientes">
-    <Properties>
-      <Property>
-        <Name>DataSourceViewID</Name>
-      </Property>
-    </Properties>
-  </PipelineComponentMetadata>
-  <TaskHost
-    design-time-name="Package\Empleados">
-    <LayoutInfo>
-      <GraphLayout
-        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
-        <NodeLayout
-          Size="144.8,41.6"
-          Id="Package\Empleados\Get Empleado"
-          TopLeft="177.714283066137,83.9999987483024" />
-        <NodeLayout
-          Size="151.2,41.6"
-          Id="Package\Empleados\Load Empleado"
-          TopLeft="176.714283081038,198.999997034669" />
-        <EdgeLayout
-          Id="Package\Empleados.Paths[OLE DB Source Output]"
-          TopLeft="251.214283073587,125.599998748302">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,73.3999982863665"
-              Start="0,0"
-              End="0,65.8999982863665">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,65.8999982863665" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-      </GraphLayout>
-    </LayoutInfo>
-  </TaskHost>
-  <PipelineComponentMetadata
-    design-time-name="Package\Empleados\Get Empleado">
-    <Properties>
-      <Property>
-        <Name>DataSourceViewID</Name>
-      </Property>
-    </Properties>
-  </PipelineComponentMetadata>
-  <TaskHost
     design-time-name="Package\Region">
     <LayoutInfo>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
-          Size="131.2,41.6"
-          Id="Package\Region\Get Region"
-          TopLeft="440.333326771855,196.333330407739" />
-        <NodeLayout
           Size="137.6,41.6"
           Id="Package\Region\Load Region"
           TopLeft="427.499993629754,319.166661910713" />
+        <NodeLayout
+          Size="131.2,41.6"
+          Id="Package\Region\Get Region"
+          TopLeft="440.333326771855,196.333330407739" />
         <EdgeLayout
           Id="Package\Region.Paths[OLE DB Source Output]"
           TopLeft="505.933326771855,237.933330407739">
@@ -8364,15 +10044,15 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==]]></arrayElement>
     design-time-name="Package\Transportista">
     <LayoutInfo>
       <GraphLayout
-        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
-        <NodeLayout
-          Size="158.4,41.6"
-          Id="Package\Transportista\Get Transportista"
-          TopLeft="441.999993413687,188.999997183681" />
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
         <NodeLayout
           Size="164.8,41.6"
           Id="Package\Transportista\Load Transportista"
           TopLeft="445.384608747867,305.38461083403" />
+        <NodeLayout
+          Size="158.4,41.6"
+          Id="Package\Transportista\Get Transportista"
+          TopLeft="441.999993413687,188.999997183681" />
         <EdgeLayout
           Id="Package\Transportista.Paths[OLE DB Source Output]"
           TopLeft="524.492301080777,230.599997183681">
@@ -8392,7 +10072,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==]]></arrayElement>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
@@ -8403,6 +10085,69 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==]]></arrayElement>
     <Properties>
       <Property>
         <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <TaskHost
+    design-time-name="Package\FactVentas">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="118.4,41.6"
+          Id="Package\FactVentas\Get Fact"
+          TopLeft="417.692301468207,105.384613814262" />
+        <NodeLayout
+          Size="124.8,41.6"
+          Id="Package\FactVentas\Load Fact"
+          TopLeft="405.538455486298,259.999996125698" />
+        <EdgeLayout
+          Id="Package\FactVentas.Paths[OLE DB Source Output]"
+          TopLeft="476.892301468207,146.984613814262">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-8.95384598190958,113.015382311436"
+              Start="0,0"
+              End="-8.95384598190958,105.515382311436">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5076911557179" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,52.5076911557179"
+                    Point2="0,56.5076911557179"
+                    Point3="-4,56.5076911557179" />
+                  <mssgle:LineSegment
+                    End="-4.95384598190958,56.5076911557179" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-4.95384598190958,56.5076911557179"
+                    Point2="-8.95384598190958,56.5076911557179"
+                    Point3="-8.95384598190958,60.5076911557179" />
+                  <mssgle:LineSegment
+                    End="-8.95384598190958,105.515382311436" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\FactVentas\Get Fact">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
       </Property>
     </Properties>
   </PipelineComponentMetadata>
